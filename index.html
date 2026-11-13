@@ -48,10 +48,30 @@
       margin-bottom: 24px;
     }
 
+    .title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     header h1 {
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--text);
+    }
+
+    .sync-badge {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--success-bg);
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .sync-badge.offline {
+      background: var(--warning-bg);
+      color: var(--warning);
     }
 
     .header-actions {
@@ -286,7 +306,10 @@
 
 <div class="container">
   <header>
-    <h1>Contas a Pagar</h1>
+    <div class="title-area">
+      <h1>Contas a Pagar</h1>
+      <span id="syncStatus" class="sync-badge offline">Conectando...</span>
+    </div>
     <div class="header-actions">
       <button class="btn-outline" onclick="exportData()" title="Baixar cópia de segurança">Exportar Backup</button>
       <button class="btn-outline" onclick="document.getElementById('importFile').click()">Importar</button>
@@ -325,7 +348,9 @@
   </section>
 
   <!-- Lista de Contas -->
-  <main class="bill-list" id="billList"></main>
+  <main class="bill-list" id="billList">
+    <div class="empty-state">Carregando contas da nuvem...</div>
+  </main>
 </div>
 
 <!-- Modal: Novo / Copiar / Próximo Mês -->
@@ -376,18 +401,40 @@
   </div>
 </div>
 
-<script>
-  const STORAGE_KEY = 'minhas_contas_pagar_v1';
-  let bills = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+<!-- SDK do Firebase (Realtime Database) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  // =========================================================================
+  // COLE O LINK DO SEU FIREBASE ABAIXO (ex: "https://meu-app-default-rtdb.firebaseio.com")
+  // =========================================================================
+  const FIREBASE_DATABASE_URL = "https://console.firebase.google.com/project/controle-contas-6fa7e/database/controle-contas-6fa7e-default-rtdb/data/~2F";
+
+  const app = initializeApp({ databaseURL: FIREBASE_DATABASE_URL });
+  const db = getDatabase(app);
+  const billsRef = ref(db, 'contas');
+
+  let bills = [];
   let lastPaidBill = null;
 
   const monthFilter = document.getElementById('monthFilter');
+  const syncStatus = document.getElementById('syncStatus');
   const today = new Date();
   monthFilter.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
 
-  function saveToStorage() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(bills));
-  }
+  // Escuta alterações na nuvem em tempo real
+  onValue(billsRef, (snapshot) => {
+    const data = snapshot.val();
+    bills = data ? Object.values(data) : [];
+    syncStatus.textContent = "Sincronizado";
+    syncStatus.classList.remove("offline");
+    render();
+  }, (error) => {
+    console.error(error);
+    syncStatus.textContent = "Erro de conexão";
+    syncStatus.classList.add("offline");
+  });
 
   function formatCurrency(val) {
     return Number(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -411,7 +458,7 @@
     return `${ny}-${nm}-${nd}`;
   }
 
-  function openNewModal() {
+  window.openNewModal = function() {
     document.getElementById('modalTitle').textContent = 'Novo Pagamento';
     document.getElementById('modalSubtitle').textContent = 'Preencha os dados da nova conta.';
     document.getElementById('billForm').reset();
@@ -422,9 +469,9 @@
 
     document.getElementById('formModal').classList.add('active');
     document.getElementById('desc').focus();
-  }
+  };
 
-  function copyBill(id) {
+  window.copyBill = function(id) {
     const bill = bills.find(b => b.id === id);
     if (!bill) return;
 
@@ -436,50 +483,52 @@
     document.getElementById('dueDate').value = bill.dueDate;
 
     document.getElementById('formModal').classList.add('active');
-  }
+  };
 
-  function saveBill(event) {
+  window.saveBill = async function(event) {
     event.preventDefault();
+    const id = Date.now().toString();
     const desc = document.getElementById('desc').value.trim();
     const category = document.getElementById('category').value;
     const amount = parseFloat(document.getElementById('amount').value);
     const dueDate = document.getElementById('dueDate').value;
 
-    bills.push({
-      id: Date.now().toString(),
+    const newBill = {
+      id,
       desc,
       category,
       amount,
       dueDate,
       paid: false,
       paidAt: null
-    });
+    };
 
-    saveToStorage();
+    await set(ref(db, `contas/${id}`), newBill);
     closeModal('formModal');
-
     monthFilter.value = dueDate.slice(0, 7);
-    render();
-  }
+  };
 
-  function togglePaid(id) {
+  window.togglePaid = async function(id) {
     const bill = bills.find(b => b.id === id);
     if (!bill) return;
 
-    bill.paid = !bill.paid;
-    bill.paidAt = bill.paid ? new Date().toISOString().slice(0, 10) : null;
-    saveToStorage();
-    render();
+    const updatedBill = {
+      ...bill,
+      paid: !bill.paid,
+      paidAt: !bill.paid ? new Date().toISOString().slice(0, 10) : null
+    };
 
-    if (bill.paid) {
-      lastPaidBill = bill;
+    await set(ref(db, `contas/${id}`), updatedBill);
+
+    if (updatedBill.paid) {
+      lastPaidBill = updatedBill;
       document.getElementById('promptMessage').textContent =
-        `Você pagou "${bill.desc}" (${formatCurrency(bill.amount)}). Quer gerar um pagamento igual a este para mês que vem?`;
+        `Você pagou "${updatedBill.desc}" (${formatCurrency(updatedBill.amount)}). Quer gerar um pagamento igual a este para mês que vem?`;
       document.getElementById('nextMonthPromptModal').classList.add('active');
     }
-  }
+  };
 
-  function confirmGenerateNextMonth() {
+  window.confirmGenerateNextMonth = function() {
     closeModal('nextMonthPromptModal');
     if (!lastPaidBill) return;
 
@@ -491,31 +540,29 @@
     document.getElementById('dueDate').value = addOneMonth(lastPaidBill.dueDate);
 
     document.getElementById('formModal').classList.add('active');
-  }
+  };
 
-  function deleteBill(id) {
+  window.deleteBill = async function(id) {
     if (!confirm('Deseja realmente excluir esta conta?')) return;
-    bills = bills.filter(b => b.id !== id);
-    saveToStorage();
-    render();
-  }
+    await remove(ref(db, `contas/${id}`));
+  };
 
-  function closeModal(modalId) {
+  window.closeModal = function(modalId) {
     document.getElementById(modalId).classList.remove('active');
-  }
+  };
 
-  function render() {
+  window.render = function() {
     const selectedMonth = monthFilter.value;
     const statusFilter = document.getElementById('statusFilter').value;
     const listEl = document.getElementById('billList');
     const todayStr = new Date().toISOString().slice(0, 10);
 
     const monthBills = bills
-      .filter(b => b.dueDate.startsWith(selectedMonth))
+      .filter(b => b.dueDate && b.dueDate.startsWith(selectedMonth))
       .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 
-    const total = monthBills.reduce((acc, b) => acc + b.amount, 0);
-    const paid = monthBills.filter(b => b.paid).reduce((acc, b) => acc + b.amount, 0);
+    const total = monthBills.reduce((acc, b) => acc + Number(b.amount), 0);
+    const paid = monthBills.filter(b => b.paid).reduce((acc, b) => acc + Number(b.amount), 0);
     const pending = total - paid;
 
     document.getElementById('totalMonth').textContent = formatCurrency(total);
@@ -562,9 +609,9 @@
         </div>
       `;
     }).join('');
-  }
+  };
 
-  function exportData() {
+  window.exportData = function() {
     const blob = new Blob([JSON.stringify(bills, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -572,29 +619,27 @@
     a.download = `backup-contas-${new Date().toISOString().slice(0,10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-  }
+  };
 
-  function importData(event) {
+  window.importData = function(event) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = async (e) => {
       try {
         const imported = JSON.parse(e.target.result);
         if (Array.isArray(imported)) {
-          bills = imported;
-          saveToStorage();
-          render();
-          alert('Backup restaurado com sucesso!');
+          const mapObj = {};
+          imported.forEach(item => { mapObj[item.id] = item; });
+          await set(billsRef, mapObj);
+          alert('Backup importado para a nuvem com sucesso!');
         }
       } catch {
         alert('Arquivo inválido.');
       }
     };
     reader.readAsText(file);
-  }
-
-  render();
+  };
 </script>
 
 </body>
