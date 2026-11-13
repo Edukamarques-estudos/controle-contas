@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Contas a Pagar</title>
+  <style>
+    :root {
+      --bg: #f8f7f4;
+      --surface: #ffffff;
+      --primary: #7c9cbf;
+      --primary-hover: #6788ad;
+      --primary-soft: #e6eef7;
+      --primary-text: #3d5a7c;
+      --success: #4a8b71;
+      --success-bg: #e1f3eb;
+      --warning: #a67c37;
+      --warning-bg: #fcf1d8;
+      --danger: #b85d68;
+      --danger-bg: #fae6e8;
+      --text: #3b424c;
+      --muted: #7e8794;
+      --border: #eae6df;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Cabeçalho */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Botões */
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary { background: var(--primary); color: #ffffff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-outline { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: #f2efe9; }
+
+    .btn-sm { padding: 6px 12px; font-size: 0.82rem; border-radius: 8px; }
+    .btn-pay { background: var(--success-bg); color: var(--success); }
+    .btn-pay:hover { background: #d0eadf; }
+    .btn-copy { background: var(--primary-soft); color: var(--primary-text); }
+    .btn-copy:hover { background: #d5e3f2; }
+    .btn-del { background: var(--danger-bg); color: var(--danger); }
+    .btn-del:hover { background: #f4d4d8; }
+
+    /* Cards de Resumo */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(59, 66, 76, 0.03);
+    }
+
+    .card span { font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 4px; }
+    .card strong { font-size: 1.4rem; }
+    .text-danger { color: var(--danger); }
+    .text-success { color: var(--success); }
+
+    /* Filtros */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="month"], select, input[type="text"], input[type="number"], input[type="date"] {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+    }
+
+    /* Lista de Contas */
+    .bill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bill-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.1s ease;
+    }
+
+    .bill-item.paid {
+      opacity: 0.8;
+      background: #fcfbf9;
+    }
+
+    .bill-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 200px;
+    }
+
+    .bill-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-pending { background: var(--warning-bg); color: var(--warning); }
+    .badge-overdue { background: var(--danger-bg); color: var(--danger); }
+    .badge-paid { background: var(--success-bg); color: var(--success); }
+
+    .bill-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .bill-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .bill-amount {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .bill-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+    }
+
+    /* Modais */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(59, 66, 76, 0.35);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      width: 100%;
+      max-width: 440px;
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 15px 30px rgba(59, 66, 76, 0.12);
+    }
+
+    .modal h2 {
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+    }
+
+    .modal p.subtitle {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .form-group input, .form-group select { width: 100%; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Contas a Pagar</h1>
+    <div class="header-actions">
+      <button class="btn-outline" onclick="exportData()" title="Baixar cópia de segurança">Exportar Backup</button>
+      <button class="btn-outline" onclick="document.getElementById('importFile').click()">Importar</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" />
+      <button class="btn-primary" onclick="openNewModal()">+ Novo Pagamento</button>
+    </div>
+  </header>
+
+  <!-- Resumo Financeiro -->
+  <section class="summary">
+    <div class="card">
+      <span>Total do Mês</span>
+      <strong id="totalMonth">R$ 0,00</strong>
+    </div>
+    <div class="card">
+      <span>A Pagar (Pendente)</span>
+      <strong id="totalPending" class="text-danger">R$ 0,00</strong>
+    </div>
+    <div class="card">
+      <span>Total Pago</span>
+      <strong id="totalPaid" class="text-success">R$ 0,00</strong>
+    </div>
+  </section>
+
+  <!-- Filtros -->
+  <section class="filters">
+    <div class="filter-group">
+      <label for="monthFilter"><strong>Mês:</strong></label>
+      <input type="month" id="monthFilter" onchange="render()" />
+      <select id="statusFilter" onchange="render()">
+        <option value="all">Todas as contas</option>
+        <option value="pending">Pendentes</option>
+        <option value="paid">Pagas</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Lista de Contas -->
+  <main class="bill-list" id="billList"></main>
+</div>
+
+<!-- Modal: Novo / Copiar / Próximo Mês -->
+<div class="modal-backdrop" id="formModal">
+  <div class="modal">
+    <h2 id="modalTitle">Novo Pagamento</h2>
+    <p class="subtitle" id="modalSubtitle">Preencha os dados da conta abaixo.</p>
+    <form id="billForm" onsubmit="saveBill(event)">
+      <div class="form-group">
+        <label for="desc">Descrição *</label>
+        <input type="text" id="desc" placeholder="Ex: Energia Elétrica, Internet, Aluguel..." required />
+      </div>
+      <div class="form-group">
+        <label for="category">Categoria</label>
+        <select id="category">
+          <option value="Casa / Moradia">Casa / Moradia</option>
+          <option value="Contas Fixas">Contas Fixas (Água, Luz, Net)</option>
+          <option value="Cartão / Empréstimo">Cartão / Empréstimo</option>
+          <option value="Veículo / Transporte">Veículo / Transporte</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="amount">Valor (R$) *</label>
+        <input type="number" id="amount" step="0.01" min="0.01" placeholder="0,00" required />
+      </div>
+      <div class="form-group">
+        <label for="dueDate">Data de Vencimento *</label>
+        <input type="date" id="dueDate" required />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('formModal')">Cancelar</button>
+        <button type="submit" class="btn-primary">Confirmar e Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Pergunta após pagar -->
+<div class="modal-backdrop" id="nextMonthPromptModal">
+  <div class="modal">
+    <h2>Conta marcada como paga!</h2>
+    <p class="subtitle" id="promptMessage">Quer gerar um pagamento igual a este para mês que vem?</p>
+    <div class="modal-footer">
+      <button type="button" class="btn-outline" onclick="closeModal('nextMonthPromptModal')">Não, obrigado</button>
+      <button type="button" class="btn-primary" onclick="confirmGenerateNextMonth()">Sim, gerar para mês que vem</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'minhas_contas_pagar_v1';
+  let bills = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  let lastPaidBill = null;
+
+  const monthFilter = document.getElementById('monthFilter');
+  const today = new Date();
+  monthFilter.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+  function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(bills));
+  }
+
+  function formatCurrency(val) {
+    return Number(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function formatDateBR(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  function addOneMonth(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const nextMonthIndex = m;
+    const lastDayOfNextMonth = new Date(y, nextMonthIndex + 1, 0).getDate();
+    const safeDay = Math.min(d, lastDayOfNextMonth);
+    const targetDate = new Date(y, nextMonthIndex, safeDay);
+
+    const ny = targetDate.getFullYear();
+    const nm = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const nd = String(targetDate.getDate()).padStart(2, '0');
+    return `${ny}-${nm}-${nd}`;
+  }
+
+  function openNewModal() {
+    document.getElementById('modalTitle').textContent = 'Novo Pagamento';
+    document.getElementById('modalSubtitle').textContent = 'Preencha os dados da nova conta.';
+    document.getElementById('billForm').reset();
+
+    const selectedMonth = monthFilter.value;
+    const dayStr = String(today.getDate()).padStart(2, '0');
+    document.getElementById('dueDate').value = `${selectedMonth}-${dayStr}`;
+
+    document.getElementById('formModal').classList.add('active');
+    document.getElementById('desc').focus();
+  }
+
+  function copyBill(id) {
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return;
+
+    document.getElementById('modalTitle').textContent = 'Copiar Pagamento';
+    document.getElementById('modalSubtitle').textContent = 'Confira ou ajuste os dados copiados antes de salvar.';
+    document.getElementById('desc').value = bill.desc;
+    document.getElementById('category').value = bill.category;
+    document.getElementById('amount').value = bill.amount;
+    document.getElementById('dueDate').value = bill.dueDate;
+
+    document.getElementById('formModal').classList.add('active');
+  }
+
+  function saveBill(event) {
+    event.preventDefault();
+    const desc = document.getElementById('desc').value.trim();
+    const category = document.getElementById('category').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const dueDate = document.getElementById('dueDate').value;
+
+    bills.push({
+      id: Date.now().toString(),
+      desc,
+      category,
+      amount,
+      dueDate,
+      paid: false,
+      paidAt: null
+    });
+
+    saveToStorage();
+    closeModal('formModal');
+
+    monthFilter.value = dueDate.slice(0, 7);
+    render();
+  }
+
+  function togglePaid(id) {
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return;
+
+    bill.paid = !bill.paid;
+    bill.paidAt = bill.paid ? new Date().toISOString().slice(0, 10) : null;
+    saveToStorage();
+    render();
+
+    if (bill.paid) {
+      lastPaidBill = bill;
+      document.getElementById('promptMessage').textContent =
+        `Você pagou "${bill.desc}" (${formatCurrency(bill.amount)}). Quer gerar um pagamento igual a este para mês que vem?`;
+      document.getElementById('nextMonthPromptModal').classList.add('active');
+    }
+  }
+
+  function confirmGenerateNextMonth() {
+    closeModal('nextMonthPromptModal');
+    if (!lastPaidBill) return;
+
+    document.getElementById('modalTitle').textContent = 'Confirmar Conta - Mês Seguinte';
+    document.getElementById('modalSubtitle').textContent = 'Dados preenchidos automaticamente. Confira o valor e o vencimento:';
+    document.getElementById('desc').value = lastPaidBill.desc;
+    document.getElementById('category').value = lastPaidBill.category;
+    document.getElementById('amount').value = lastPaidBill.amount;
+    document.getElementById('dueDate').value = addOneMonth(lastPaidBill.dueDate);
+
+    document.getElementById('formModal').classList.add('active');
+  }
+
+  function deleteBill(id) {
+    if (!confirm('Deseja realmente excluir esta conta?')) return;
+    bills = bills.filter(b => b.id !== id);
+    saveToStorage();
+    render();
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+  }
+
+  function render() {
+    const selectedMonth = monthFilter.value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const listEl = document.getElementById('billList');
+    const todayStr = new Date().toISOString().slice(0, 10);
+
+    const monthBills = bills
+      .filter(b => b.dueDate.startsWith(selectedMonth))
+      .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+    const total = monthBills.reduce((acc, b) => acc + b.amount, 0);
+    const paid = monthBills.filter(b => b.paid).reduce((acc, b) => acc + b.amount, 0);
+    const pending = total - paid;
+
+    document.getElementById('totalMonth').textContent = formatCurrency(total);
+    document.getElementById('totalPaid').textContent = formatCurrency(paid);
+    document.getElementById('totalPending').textContent = formatCurrency(pending);
+
+    const filteredBills = monthBills.filter(b => {
+      if (statusFilter === 'pending') return !b.paid;
+      if (statusFilter === 'paid') return b.paid;
+      return true;
+    });
+
+    if (filteredBills.length === 0) {
+      listEl.innerHTML = `<div class="empty-state">Nenhuma conta encontrada para este filtro.</div>`;
+      return;
+    }
+
+    listEl.innerHTML = filteredBills.map(bill => {
+      const isOverdue = !bill.paid && bill.dueDate < todayStr;
+      let badgeHtml = `<span class="badge badge-pending">Pendente</span>`;
+      if (bill.paid) badgeHtml = `<span class="badge badge-paid">Pago</span>`;
+      else if (isOverdue) badgeHtml = `<span class="badge badge-overdue">Vencida</span>`;
+
+      return `
+        <div class="bill-item ${bill.paid ? 'paid' : ''}">
+          <div class="bill-info">
+            <div class="bill-title">${bill.desc} ${badgeHtml}</div>
+            <div class="bill-meta">Vencimento: <strong>${formatDateBR(bill.dueDate)}</strong> • ${bill.category}</div>
+          </div>
+          <div class="bill-right">
+            <div class="bill-amount">${formatCurrency(bill.amount)}</div>
+            <div class="bill-actions">
+              <button class="btn-sm btn-pay" onclick="togglePaid('${bill.id}')">
+                ${bill.paid ? '↩ Reabrir' : '✓ Pagar'}
+              </button>
+              <button class="btn-sm btn-copy" onclick="copyBill('${bill.id}')" title="Copiar dados desta conta">
+                Copiar
+              </button>
+              <button class="btn-sm btn-del" onclick="deleteBill('${bill.id}')" title="Excluir">
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function exportData() {
+    const blob = new Blob([JSON.stringify(bills, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup-contas-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (Array.isArray(imported)) {
+          bills = imported;
+          saveToStorage();
+          render();
+          alert('Backup restaurado com sucesso!');
+        }
+      } catch {
+        alert('Arquivo inválido.');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  render();
+</script>
+
+</body>
+</html>
