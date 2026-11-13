@@ -133,7 +133,7 @@
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 16px;
@@ -144,6 +144,12 @@
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 180px;
     }
 
     input[type="month"], select, input[type="text"], input[type="number"], input[type="date"] {
@@ -337,13 +343,19 @@
   <!-- Filtros -->
   <section class="filters">
     <div class="filter-group">
-      <label for="monthFilter"><strong>Mês:</strong></label>
-      <input type="month" id="monthFilter" onchange="render()" />
-      <select id="statusFilter" onchange="render()">
+      <input type="month" id="monthFilter" onchange="render()" title="Filtrar por mês" />
+      <select id="statusFilter" onchange="render()" title="Filtrar por situação">
         <option value="all">Todas as contas</option>
         <option value="pending">Pendentes</option>
         <option value="paid">Pagas</option>
       </select>
+      <input
+        type="text"
+        id="searchFilter"
+        class="search-input"
+        placeholder="Buscar por nome (ex: Luz, Internet...)"
+        oninput="render()"
+      />
     </div>
   </section>
 
@@ -443,6 +455,14 @@
   function formatDateBR(dateStr) {
     const [y, m, d] = dateStr.split('-');
     return `${d}/${m}/${y}`;
+  }
+
+  // Normaliza texto para ignorar acentos e maiúsculas na busca
+  function normalizeText(text) {
+    return (text || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
   }
 
   function addOneMonth(dateStr) {
@@ -554,6 +574,7 @@
   window.render = function() {
     const selectedMonth = monthFilter.value;
     const statusFilter = document.getElementById('statusFilter').value;
+    const searchQuery = normalizeText(document.getElementById('searchFilter').value.trim());
     const listEl = document.getElementById('billList');
     const todayStr = new Date().toISOString().slice(0, 10);
 
@@ -570,9 +591,14 @@
     document.getElementById('totalPending').textContent = formatCurrency(pending);
 
     const filteredBills = monthBills.filter(b => {
-      if (statusFilter === 'pending') return !b.paid;
-      if (statusFilter === 'paid') return b.paid;
-      return true;
+      const matchesStatus =
+        statusFilter === 'pending' ? !b.paid :
+        statusFilter === 'paid' ? b.paid : true;
+
+      const matchesSearch =
+        !searchQuery || normalizeText(b.desc).includes(searchQuery);
+
+      return matchesStatus && matchesSearch;
     });
 
     if (filteredBills.length === 0) {
