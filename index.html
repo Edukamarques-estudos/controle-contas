@@ -87,7 +87,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      padding: 18px;
+      padding: 18px 18px 88px 18px;
       line-height: 1.5;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
@@ -101,7 +101,7 @@
     .nav-tabs {
       display: flex;
       gap: 6px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       background: var(--surface);
       padding: 5px;
       border-radius: 13px;
@@ -143,7 +143,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .title-area {
@@ -153,7 +153,7 @@
     }
 
     header h1 {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -208,6 +208,35 @@
       background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border);
+    }
+
+    /* Botão Flutuante Circular (+) no canto inferior direito */
+    .fab-add {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 2rem;
+      font-weight: 400;
+      line-height: 1;
+      padding: 0;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      z-index: 40;
+    }
+    body.dark .fab-add {
+      color: #16191e;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    }
+    .fab-add:hover {
+      background: var(--primary-hover);
+      transform: scale(1.05);
+    }
+    .fab-add:active {
+      transform: scale(0.97);
     }
 
     .btn-this-month {
@@ -268,25 +297,42 @@
       filter: brightness(1.15);
     }
 
-    /* Cards de Resumo (Tamanho menor e mais compacto) */
+    /* Resumos lado a lado e sem quadros (visual limpo) */
     .summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
+      padding: 6px 2px 12px 2px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .card {
-      background: var(--surface);
-      padding: 11px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
     }
 
-    .card span { font-size: 0.76rem; color: var(--muted); display: block; margin-bottom: 2px; }
-    .card strong { font-size: 1.1rem; display: block; line-height: 1.25; }
-    .card small { font-size: 0.72rem; color: var(--muted); margin-top: 2px; display: block; }
+    .summary-item span {
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .summary-item strong {
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .summary-item small {
+      font-size: 0.68rem;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+
     .text-danger { color: var(--danger); }
     .text-success { color: var(--success); }
     .text-credit { color: var(--gain); }
@@ -585,25 +631,24 @@
     </div>
     <div class="header-actions">
       <button type="button" class="btn-theme" id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">🌙</button>
-      <button class="btn-primary" id="btnNewItem" onclick="openNewModal()">+ Novo Pagamento</button>
     </div>
   </header>
 
   <!-- Conteúdo das Abas 1 e 2 (Contas e Carro) -->
   <div id="recordsView">
-    <!-- Resumo Financeiro Compacto -->
+    <!-- Resumo Financeiro Limpo e Lado a Lado -->
     <section class="summary">
-      <div class="card">
+      <div class="summary-item">
         <span id="card1Label">Total do Mês</span>
         <strong id="card1Value">R$ 0,00</strong>
         <small id="card1Sub"></small>
       </div>
-      <div class="card">
-        <span id="card2Label">A Pagar (Pendente)</span>
+      <div class="summary-item">
+        <span id="card2Label">A Pagar</span>
         <strong id="card2Value" class="text-danger">R$ 0,00</strong>
         <small id="card2Sub"></small>
       </div>
-      <div class="card">
+      <div class="summary-item">
         <span id="card3Label">Total Pago</span>
         <strong id="card3Value" class="text-success">R$ 0,00</strong>
         <small id="card3Sub"></small>
@@ -685,6 +730,9 @@
     </div>
   </section>
 </div>
+
+<!-- Botão Flutuante Circular (+) no canto inferior direito -->
+<button type="button" class="fab-add" id="btnNewItem" onclick="openNewModal()" title="Novo lançamento">+</button>
 
 <!-- Modal: Novo / Editar / Copiar / Próximo Mês -->
 <div class="modal-backdrop" id="formModal">
@@ -895,7 +943,7 @@
     }
 
     document.getElementById('pageTitle').textContent = isCarro ? 'Carro' : 'Contas a Pagar';
-    document.getElementById('btnNewItem').textContent = isCarro ? '+ Novo Lançamento' : '+ Novo Pagamento';
+    document.getElementById('btnNewItem').title = isCarro ? 'Novo lançamento' : 'Novo pagamento';
     document.getElementById('maintFilter').classList.toggle('hidden', !isCarro);
     document.getElementById('maintTypeGroup').classList.toggle('hidden', !isCarro);
     document.getElementById('desc').placeholder = isCarro
@@ -1179,31 +1227,31 @@
       const pendingDebits = debits.filter(b => !b.paid).reduce((acc, b) => acc + Number(b.amount), 0);
       const netBalance = totalCredits - totalDebits;
 
-      c1Label.textContent = onlyTodayFilter ? 'Ganhos Hoje (Crédito)' : 'Ganhos App (Crédito)';
+      c1Label.textContent = onlyTodayFilter ? 'Ganhos Hoje' : 'Ganhos App';
       c1Val.className = 'text-credit';
       c1Val.textContent = formatCurrency(totalCredits);
-      c1Sub.textContent = credits.length ? `${credits.length} lançamento(s)` : '';
+      c1Sub.textContent = credits.length ? `${credits.length} reg.` : '';
 
-      c2Label.textContent = onlyTodayFilter ? 'Despesas Hoje (Débito)' : 'Despesas Carro (Débito)';
+      c2Label.textContent = onlyTodayFilter ? 'Despesas Hoje' : 'Despesas';
       c2Val.className = 'text-danger';
       c2Val.textContent = formatCurrency(totalDebits);
-      c2Sub.textContent = pendingDebits > 0 ? `Pendente: ${formatCurrency(pendingDebits)}` : 'Tudo pago';
+      c2Sub.textContent = pendingDebits > 0 ? `Pend: ${formatCurrency(pendingDebits)}` : 'Tudo pago';
 
-      c3Label.textContent = onlyTodayFilter ? 'Saldo Líquido (Hoje)' : 'Saldo Líquido do Mês';
+      c3Label.textContent = onlyTodayFilter ? 'Saldo Hoje' : 'Saldo Líquido';
       c3Val.className = netBalance >= 0 ? 'text-credit' : 'text-danger';
       c3Val.textContent = formatCurrency(netBalance);
-      c3Sub.textContent = 'Ganhos menos despesas';
+      c3Sub.textContent = '';
     } else {
       const total = periodBills.reduce((acc, b) => acc + Number(b.amount), 0);
       const paid = periodBills.filter(b => b.paid).reduce((acc, b) => acc + Number(b.amount), 0);
       const pending = total - paid;
 
-      c1Label.textContent = onlyTodayFilter ? 'Total de Hoje' : 'Total do Mês';
+      c1Label.textContent = onlyTodayFilter ? 'Total Hoje' : 'Total do Mês';
       c1Val.className = '';
       c1Val.textContent = formatCurrency(total);
       c1Sub.textContent = '';
 
-      c2Label.textContent = 'A Pagar (Pendente)';
+      c2Label.textContent = 'A Pagar';
       c2Val.className = 'text-danger';
       c2Val.textContent = formatCurrency(pending);
       c2Sub.textContent = '';
