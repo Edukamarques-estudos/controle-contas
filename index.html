@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -86,7 +87,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      padding: 20px;
+      padding: 18px;
       line-height: 1.5;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
@@ -100,10 +101,10 @@
     .nav-tabs {
       display: flex;
       gap: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       background: var(--surface);
-      padding: 6px;
-      border-radius: 14px;
+      padding: 5px;
+      border-radius: 13px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
       width: fit-content;
@@ -111,9 +112,9 @@
     }
 
     .nav-tab {
-      padding: 9px 18px;
-      border-radius: 10px;
-      font-size: 0.95rem;
+      padding: 8px 16px;
+      border-radius: 9px;
+      font-size: 0.9rem;
       font-weight: 700;
       background: transparent;
       color: var(--muted);
@@ -141,8 +142,8 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 22px;
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .title-area {
@@ -152,14 +153,14 @@
     }
 
     header h1 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--text);
     }
 
     .sync-badge {
-      font-size: 0.75rem;
-      padding: 3px 10px;
+      font-size: 0.72rem;
+      padding: 3px 9px;
       border-radius: 999px;
       background: var(--success-bg);
       color: var(--success);
@@ -183,8 +184,8 @@
       cursor: pointer;
       border: none;
       border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 0.9rem;
+      padding: 9px 14px;
+      font-size: 0.88rem;
       font-weight: 600;
       transition: all 0.15s ease;
       display: inline-flex;
@@ -202,8 +203,8 @@
     body.dark .btn-outline:hover { filter: brightness(1.15); }
 
     .btn-theme {
-      padding: 9px 12px;
-      font-size: 1rem;
+      padding: 8px 11px;
+      font-size: 0.95rem;
       background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border);
@@ -213,10 +214,29 @@
       background: var(--warning-bg);
       color: var(--warning);
       border: 1px solid var(--warning-border);
-      padding: 9px 14px;
+      padding: 8px 12px;
+      font-size: 0.84rem;
     }
     .btn-this-month:hover { filter: brightness(0.96); }
     body.dark .btn-this-month:hover { filter: brightness(1.12); }
+
+    .btn-today {
+      background: var(--primary-soft);
+      color: var(--primary-text);
+      border: 1px solid var(--credit-border);
+      padding: 8px 12px;
+      font-size: 0.84rem;
+    }
+    .btn-today.active-today {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+    body.dark .btn-today.active-today {
+      color: #16191e;
+    }
+    .btn-today:hover { filter: brightness(0.96); }
+    body.dark .btn-today:hover { filter: brightness(1.12); }
 
     /* Botões de ação com fonte menor */
     .btn-sm { padding: 5px 9px; font-size: 0.75rem; border-radius: 7px; }
@@ -248,25 +268,25 @@
       filter: brightness(1.15);
     }
 
-    /* Cards de Resumo */
+    /* Cards de Resumo (Tamanho menor e mais compacto) */
     .summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .card {
       background: var(--surface);
-      padding: 18px;
-      border-radius: var(--radius);
+      padding: 11px 14px;
+      border-radius: 12px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
     }
 
-    .card span { font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 4px; }
-    .card strong { font-size: 1.4rem; display: block; }
-    .card small { font-size: 0.78rem; color: var(--muted); margin-top: 4px; display: block; }
+    .card span { font-size: 0.76rem; color: var(--muted); display: block; margin-bottom: 2px; }
+    .card strong { font-size: 1.1rem; display: block; line-height: 1.25; }
+    .card small { font-size: 0.72rem; color: var(--muted); margin-top: 2px; display: block; }
     .text-danger { color: var(--danger); }
     .text-success { color: var(--success); }
     .text-credit { color: var(--gain); }
@@ -275,15 +295,15 @@
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .filter-group {
       display: flex;
-      gap: 8px;
+      gap: 7px;
       align-items: center;
       flex-wrap: wrap;
       width: 100%;
@@ -291,14 +311,14 @@
 
     .search-input {
       flex: 1;
-      min-width: 180px;
+      min-width: 170px;
     }
 
     input[type="month"], select, input[type="text"], input[type="number"], input[type="date"], textarea {
-      padding: 9px 12px;
+      padding: 8px 11px;
       border: 1px solid var(--border);
       border-radius: 10px;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       background: var(--surface);
       color: var(--text);
       outline: none;
@@ -330,7 +350,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 42px 16px 16px;
+      padding: 15px 42px 15px 15px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
@@ -365,7 +385,7 @@
 
     .bill-title {
       font-weight: 600;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       display: flex;
       align-items: center;
       flex-wrap: wrap;
@@ -380,8 +400,8 @@
     }
 
     .badge {
-      font-size: 0.72rem;
-      padding: 3px 9px;
+      font-size: 0.7rem;
+      padding: 2px 8px;
       border-radius: 999px;
       font-weight: 700;
       text-transform: uppercase;
@@ -397,7 +417,7 @@
     .badge-gain { background: var(--gain-bg); color: var(--gain); }
 
     .bill-meta {
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--muted);
     }
 
@@ -409,7 +429,7 @@
     }
 
     .bill-notes {
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       color: var(--notes-text);
       background: var(--notes-bg);
       padding: 6px 10px;
@@ -427,7 +447,7 @@
     }
 
     .bill-amount {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--danger);
     }
@@ -444,11 +464,12 @@
 
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 36px 20px;
       background: var(--surface);
       border-radius: var(--radius);
       border: 1px dashed var(--border);
       color: var(--muted);
+      font-size: 0.9rem;
     }
 
     /* Seção ADM */
@@ -460,7 +481,7 @@
 
     .adm-card {
       background: var(--surface);
-      padding: 22px;
+      padding: 20px;
       border-radius: var(--radius);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
@@ -470,11 +491,11 @@
     }
 
     .adm-card h2 {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
     }
 
     .adm-card p {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       color: var(--muted);
     }
 
@@ -570,7 +591,7 @@
 
   <!-- Conteúdo das Abas 1 e 2 (Contas e Carro) -->
   <div id="recordsView">
-    <!-- Resumo Financeiro -->
+    <!-- Resumo Financeiro Compacto -->
     <section class="summary">
       <div class="card">
         <span id="card1Label">Total do Mês</span>
@@ -592,7 +613,7 @@
     <!-- Filtros -->
     <section class="filters">
       <div class="filter-group">
-        <input type="month" id="monthFilter" onchange="render()" title="Filtrar por mês" />
+        <input type="month" id="monthFilter" onchange="onMonthChange()" title="Filtrar por mês" />
         <select id="statusFilter" onchange="render()" title="Filtrar por situação">
           <option value="all">Todas</option>
           <option value="pending">Pendentes</option>
@@ -606,6 +627,9 @@
           <option value="Combustível">Combustível</option>
           <option value="Ganhos App">Ganhos App (Crédito)</option>
         </select>
+        <button type="button" class="btn-today" id="btnToday" onclick="filterToday()" title="Ver apenas lançamentos de hoje">
+          Hoje
+        </button>
         <button type="button" class="btn-this-month" onclick="filterThisMonthPending()" title="Ver pendentes do mês atual">
           Este mês
         </button>
@@ -763,6 +787,7 @@
   };
 
   let currentPage = 'contas'; // 'contas', 'carro' ou 'adm'
+  let onlyTodayFilter = false;
   let lastPaidBill = null;
 
   const WEEKDAYS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
@@ -790,9 +815,16 @@
   const monthFilter = document.getElementById('monthFilter');
   const syncStatus = document.getElementById('syncStatus');
 
-  function getCurrentMonthStr() {
+  function getTodayLocalStr() {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function getCurrentMonthStr() {
+    return getTodayLocalStr().slice(0, 7);
   }
 
   monthFilter.value = getCurrentMonthStr();
@@ -832,9 +864,15 @@
       .join('');
   }
 
+  function syncTodayButtonUI() {
+    document.getElementById('btnToday').classList.toggle('active-today', onlyTodayFilter);
+  }
+
   // Alterna entre Aba 1 (Contas), Aba 2 (Carro) e Aba 3 (ADM)
   window.switchPage = function(page) {
     currentPage = page;
+    onlyTodayFilter = false;
+    syncTodayButtonUI();
 
     document.getElementById('tab-contas').classList.toggle('active', page === 'contas');
     document.getElementById('tab-carro').classList.toggle('active', page === 'carro');
@@ -842,6 +880,9 @@
 
     const isAdm = page === 'adm';
     const isCarro = page === 'carro';
+
+    // Remove o botão do dark mode na aba Carro
+    themeToggleBtn.classList.toggle('hidden', isCarro);
 
     document.getElementById('recordsView').classList.toggle('hidden', isAdm);
     document.getElementById('admView').classList.toggle('hidden', !isAdm);
@@ -909,7 +950,28 @@
     return `${ny}-${nm}-${nd}`;
   }
 
+  window.onMonthChange = function() {
+    onlyTodayFilter = false;
+    syncTodayButtonUI();
+    render();
+  };
+
+  // Botão "Hoje" -> filtra apenas os lançamentos da data de hoje
+  window.filterToday = function() {
+    onlyTodayFilter = !onlyTodayFilter;
+    if (onlyTodayFilter) {
+      monthFilter.value = getCurrentMonthStr();
+      document.getElementById('statusFilter').value = 'all';
+      document.getElementById('maintFilter').value = 'all';
+      document.getElementById('searchFilter').value = '';
+    }
+    syncTodayButtonUI();
+    render();
+  };
+
   window.filterThisMonthPending = function() {
+    onlyTodayFilter = false;
+    syncTodayButtonUI();
     monthFilter.value = getCurrentMonthStr();
     document.getElementById('statusFilter').value = 'pending';
     document.getElementById('maintFilter').value = 'all';
@@ -1019,6 +1081,8 @@
     }
 
     closeModal('formModal');
+    onlyTodayFilter = false;
+    syncTodayButtonUI();
     monthFilter.value = dueDate.slice(0, 7);
   };
 
@@ -1029,7 +1093,7 @@
     const updatedBill = {
       ...bill,
       paid: !bill.paid,
-      paidAt: !bill.paid ? new Date().toISOString().slice(0, 10) : null
+      paidAt: !bill.paid ? getTodayLocalStr() : null
     };
 
     await set(ref(db, `${currentPage}/${id}`), updatedBill);
@@ -1083,13 +1147,17 @@
     const maintFilter = document.getElementById('maintFilter').value;
     const searchQuery = normalizeText(document.getElementById('searchFilter').value.trim());
     const listEl = document.getElementById('billList');
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = getTodayLocalStr();
     const isCarro = currentPage === 'carro';
 
     const items = dataStore[currentPage] || [];
 
-    const monthBills = items
-      .filter(b => b.dueDate && b.dueDate.startsWith(selectedMonth))
+    // Filtra por hoje ou pelo mês selecionado
+    const periodBills = items
+      .filter(b => {
+        if (!b.dueDate) return false;
+        return onlyTodayFilter ? b.dueDate === todayStr : b.dueDate.startsWith(selectedMonth);
+      })
       .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 
     const c1Label = document.getElementById('card1Label');
@@ -1103,34 +1171,34 @@
     const c3Sub = document.getElementById('card3Sub');
 
     if (isCarro) {
-      const credits = monthBills.filter(b => b.maintType === 'Ganhos App');
-      const debits = monthBills.filter(b => b.maintType !== 'Ganhos App');
+      const credits = periodBills.filter(b => b.maintType === 'Ganhos App');
+      const debits = periodBills.filter(b => b.maintType !== 'Ganhos App');
 
       const totalCredits = credits.reduce((acc, b) => acc + Number(b.amount), 0);
       const totalDebits = debits.reduce((acc, b) => acc + Number(b.amount), 0);
       const pendingDebits = debits.filter(b => !b.paid).reduce((acc, b) => acc + Number(b.amount), 0);
       const netBalance = totalCredits - totalDebits;
 
-      c1Label.textContent = 'Ganhos App (Crédito)';
+      c1Label.textContent = onlyTodayFilter ? 'Ganhos Hoje (Crédito)' : 'Ganhos App (Crédito)';
       c1Val.className = 'text-credit';
       c1Val.textContent = formatCurrency(totalCredits);
       c1Sub.textContent = credits.length ? `${credits.length} lançamento(s)` : '';
 
-      c2Label.textContent = 'Despesas Carro (Débito)';
+      c2Label.textContent = onlyTodayFilter ? 'Despesas Hoje (Débito)' : 'Despesas Carro (Débito)';
       c2Val.className = 'text-danger';
       c2Val.textContent = formatCurrency(totalDebits);
       c2Sub.textContent = pendingDebits > 0 ? `Pendente: ${formatCurrency(pendingDebits)}` : 'Tudo pago';
 
-      c3Label.textContent = 'Saldo Líquido do Mês';
+      c3Label.textContent = onlyTodayFilter ? 'Saldo Líquido (Hoje)' : 'Saldo Líquido do Mês';
       c3Val.className = netBalance >= 0 ? 'text-credit' : 'text-danger';
       c3Val.textContent = formatCurrency(netBalance);
       c3Sub.textContent = 'Ganhos menos despesas';
     } else {
-      const total = monthBills.reduce((acc, b) => acc + Number(b.amount), 0);
-      const paid = monthBills.filter(b => b.paid).reduce((acc, b) => acc + Number(b.amount), 0);
+      const total = periodBills.reduce((acc, b) => acc + Number(b.amount), 0);
+      const paid = periodBills.filter(b => b.paid).reduce((acc, b) => acc + Number(b.amount), 0);
       const pending = total - paid;
 
-      c1Label.textContent = 'Total do Mês';
+      c1Label.textContent = onlyTodayFilter ? 'Total de Hoje' : 'Total do Mês';
       c1Val.className = '';
       c1Val.textContent = formatCurrency(total);
       c1Sub.textContent = '';
@@ -1146,7 +1214,7 @@
       c3Sub.textContent = '';
     }
 
-    const filteredBills = monthBills.filter(b => {
+    const filteredBills = periodBills.filter(b => {
       const matchesStatus =
         statusFilter === 'pending' ? !b.paid :
         statusFilter === 'paid' ? b.paid : true;
@@ -1163,7 +1231,7 @@
     });
 
     if (filteredBills.length === 0) {
-      listEl.innerHTML = `<div class="empty-state">Nenhum registro encontrado para este filtro.</div>`;
+      listEl.innerHTML = `<div class="empty-state">${onlyTodayFilter ? 'Nenhum lançamento registrado para hoje.' : 'Nenhum registro encontrado para este filtro.'}</div>`;
       return;
     }
 
@@ -1236,7 +1304,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `backup-${targetKey}-${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `backup-${targetKey}-${getTodayLocalStr()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
