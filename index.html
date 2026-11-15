@@ -1,3 +1,6 @@
+HTML
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -18,6 +21,8 @@
       --warning-bg: #fcf1d8;
       --danger: #b85d68;
       --danger-bg: #fae6e8;
+      --edit: #6d689e;
+      --edit-bg: #ecebfa;
       --text: #3b424c;
       --muted: #7e8794;
       --border: #eae6df;
@@ -34,7 +39,7 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
     }
 
@@ -100,9 +105,19 @@
     .btn-outline { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
     .btn-outline:hover { background: #f2efe9; }
 
-    .btn-sm { padding: 6px 12px; font-size: 0.82rem; border-radius: 8px; }
+    .btn-this-month {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid #f2dfb3;
+      padding: 9px 14px;
+    }
+    .btn-this-month:hover { background: #f9e7be; }
+
+    .btn-sm { padding: 6px 11px; font-size: 0.82rem; border-radius: 8px; }
     .btn-pay { background: var(--success-bg); color: var(--success); }
     .btn-pay:hover { background: #d0eadf; }
+    .btn-edit { background: var(--edit-bg); color: var(--edit); }
+    .btn-edit:hover { background: #dfddf5; }
     .btn-copy { background: var(--primary-soft); color: var(--primary-text); }
     .btn-copy:hover { background: #d5e3f2; }
     .btn-del { background: var(--danger-bg); color: var(--danger); }
@@ -152,7 +167,7 @@
       min-width: 180px;
     }
 
-    input[type="month"], select, input[type="text"], input[type="number"], input[type="date"] {
+    input[type="month"], select, input[type="text"], input[type="number"], input[type="date"], textarea {
       padding: 9px 12px;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -162,7 +177,12 @@
       outline: none;
     }
 
-    input:focus, select:focus {
+    textarea {
+      resize: vertical;
+      min-height: 68px;
+    }
+
+    input:focus, select:focus, textarea:focus {
       border-color: var(--primary);
     }
 
@@ -195,7 +215,8 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      min-width: 200px;
+      min-width: 220px;
+      flex: 1;
     }
 
     .bill-title {
@@ -203,6 +224,7 @@
       font-size: 1.05rem;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 8px;
     }
 
@@ -224,6 +246,17 @@
       color: var(--muted);
     }
 
+    .bill-notes {
+      font-size: 0.84rem;
+      color: #5c6573;
+      background: #f5f3ef;
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-top: 4px;
+      border-left: 3px solid var(--primary);
+      word-break: break-word;
+    }
+
     .bill-right {
       display: flex;
       align-items: center;
@@ -239,6 +272,7 @@
     .bill-actions {
       display: flex;
       gap: 6px;
+      flex-wrap: wrap;
     }
 
     .empty-state {
@@ -268,11 +302,13 @@
     .modal {
       background: var(--surface);
       width: 100%;
-      max-width: 440px;
+      max-width: 450px;
       border-radius: var(--radius);
       padding: 24px;
       border: 1px solid var(--border);
       box-shadow: 0 15px 30px rgba(59, 66, 76, 0.12);
+      max-height: 92vh;
+      overflow-y: auto;
     }
 
     .modal h2 {
@@ -298,7 +334,7 @@
       font-weight: 600;
     }
 
-    .form-group input, .form-group select { width: 100%; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; }
 
     .modal-footer {
       display: flex;
@@ -349,11 +385,14 @@
         <option value="pending">Pendentes</option>
         <option value="paid">Pagas</option>
       </select>
+      <button type="button" class="btn-this-month" onclick="filterThisMonthPending()" title="Ver pendentes do mês atual">
+        Este mês
+      </button>
       <input
         type="text"
         id="searchFilter"
         class="search-input"
-        placeholder="Buscar por nome (ex: Luz, Internet...)"
+        placeholder="Buscar por nome ou observação..."
         oninput="render()"
       />
     </div>
@@ -365,12 +404,13 @@
   </main>
 </div>
 
-<!-- Modal: Novo / Copiar / Próximo Mês -->
+<!-- Modal: Novo / Editar / Copiar / Próximo Mês -->
 <div class="modal-backdrop" id="formModal">
   <div class="modal">
     <h2 id="modalTitle">Novo Pagamento</h2>
     <p class="subtitle" id="modalSubtitle">Preencha os dados da conta abaixo.</p>
     <form id="billForm" onsubmit="saveBill(event)">
+      <input type="hidden" id="editBillId" value="" />
       <div class="form-group">
         <label for="desc">Descrição *</label>
         <input type="text" id="desc" placeholder="Ex: Energia Elétrica, Internet, Aluguel..." required />
@@ -393,9 +433,13 @@
         <label for="dueDate">Data de Vencimento *</label>
         <input type="date" id="dueDate" required />
       </div>
+      <div class="form-group">
+        <label for="notes">Observações (opcional)</label>
+        <textarea id="notes" placeholder="Ex: Chave Pix, parcela 3/10, débito automático, código de barras..."></textarea>
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn-outline" onclick="closeModal('formModal')">Cancelar</button>
-        <button type="submit" class="btn-primary">Confirmar e Salvar</button>
+        <button type="submit" class="btn-primary" id="submitBtn">Confirmar e Salvar</button>
       </div>
     </form>
   </div>
@@ -432,8 +476,13 @@
 
   const monthFilter = document.getElementById('monthFilter');
   const syncStatus = document.getElementById('syncStatus');
-  const today = new Date();
-  monthFilter.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+  function getCurrentMonthStr() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  monthFilter.value = getCurrentMonthStr();
 
   // Escuta alterações na nuvem em tempo real
   onValue(billsRef, (snapshot) => {
@@ -457,7 +506,14 @@
     return `${d}/${m}/${y}`;
   }
 
-  // Normaliza texto para ignorar acentos e maiúsculas na busca
+  function escapeHTML(str) {
+    return (str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function normalizeText(text) {
     return (text || '')
       .toLowerCase()
@@ -478,52 +534,101 @@
     return `${ny}-${nm}-${nd}`;
   }
 
+  // Botão "Este mês" -> filtra pendentes do mês atual
+  window.filterThisMonthPending = function() {
+    monthFilter.value = getCurrentMonthStr();
+    document.getElementById('statusFilter').value = 'pending';
+    document.getElementById('searchFilter').value = '';
+    render();
+  };
+
   window.openNewModal = function() {
+    document.getElementById('editBillId').value = '';
     document.getElementById('modalTitle').textContent = 'Novo Pagamento';
     document.getElementById('modalSubtitle').textContent = 'Preencha os dados da nova conta.';
+    document.getElementById('submitBtn').textContent = 'Confirmar e Salvar';
     document.getElementById('billForm').reset();
 
     const selectedMonth = monthFilter.value;
-    const dayStr = String(today.getDate()).padStart(2, '0');
+    const dayStr = String(new Date().getDate()).padStart(2, '0');
     document.getElementById('dueDate').value = `${selectedMonth}-${dayStr}`;
 
     document.getElementById('formModal').classList.add('active');
     document.getElementById('desc').focus();
   };
 
-  window.copyBill = function(id) {
+  window.editBill = function(id) {
     const bill = bills.find(b => b.id === id);
     if (!bill) return;
 
-    document.getElementById('modalTitle').textContent = 'Copiar Pagamento';
-    document.getElementById('modalSubtitle').textContent = 'Confira ou ajuste os dados copiados antes de salvar.';
+    document.getElementById('editBillId').value = bill.id;
+    document.getElementById('modalTitle').textContent = 'Editar Pagamento';
+    document.getElementById('modalSubtitle').textContent = 'Altere o valor, vencimento, observação ou outros dados:';
+    document.getElementById('submitBtn').textContent = 'Salvar Alterações';
+
     document.getElementById('desc').value = bill.desc;
     document.getElementById('category').value = bill.category;
     document.getElementById('amount').value = bill.amount;
     document.getElementById('dueDate').value = bill.dueDate;
+    document.getElementById('notes').value = bill.notes || '';
+
+    document.getElementById('formModal').classList.add('active');
+    document.getElementById('amount').focus();
+  };
+
+  window.copyBill = function(id) {
+    const bill = bills.find(b => b.id === id);
+    if (!bill) return;
+
+    document.getElementById('editBillId').value = '';
+    document.getElementById('modalTitle').textContent = 'Copiar Pagamento';
+    document.getElementById('modalSubtitle').textContent = 'Confira ou ajuste os dados copiados antes de salvar.';
+    document.getElementById('submitBtn').textContent = 'Confirmar e Salvar';
+
+    document.getElementById('desc').value = bill.desc;
+    document.getElementById('category').value = bill.category;
+    document.getElementById('amount').value = bill.amount;
+    document.getElementById('dueDate').value = bill.dueDate;
+    document.getElementById('notes').value = bill.notes || '';
 
     document.getElementById('formModal').classList.add('active');
   };
 
   window.saveBill = async function(event) {
     event.preventDefault();
-    const id = Date.now().toString();
+    const editingId = document.getElementById('editBillId').value;
     const desc = document.getElementById('desc').value.trim();
     const category = document.getElementById('category').value;
     const amount = parseFloat(document.getElementById('amount').value);
     const dueDate = document.getElementById('dueDate').value;
+    const notes = document.getElementById('notes').value.trim();
 
-    const newBill = {
-      id,
-      desc,
-      category,
-      amount,
-      dueDate,
-      paid: false,
-      paidAt: null
-    };
+    if (editingId) {
+      const existing = bills.find(b => b.id === editingId);
+      const updatedBill = {
+        ...existing,
+        desc,
+        category,
+        amount,
+        dueDate,
+        notes
+      };
+      await set(ref(db, `contas/${editingId}`), updatedBill);
+    } else {
+      const id = Date.now().toString();
+      const newBill = {
+        id,
+        desc,
+        category,
+        amount,
+        dueDate,
+        notes,
+        paid: false,
+        paidAt: null
+      };
+      await set(ref(db, `contas/${id}`), newBill);
+    }
 
-    await set(ref(db, `contas/${id}`), newBill);
     closeModal('formModal');
     monthFilter.value = dueDate.slice(0, 7);
   };
@@ -552,12 +657,16 @@
     closeModal('nextMonthPromptModal');
     if (!lastPaidBill) return;
 
+    document.getElementById('editBillId').value = '';
     document.getElementById('modalTitle').textContent = 'Confirmar Conta - Mês Seguinte';
     document.getElementById('modalSubtitle').textContent = 'Dados preenchidos automaticamente. Confira o valor e o vencimento:';
+    document.getElementById('submitBtn').textContent = 'Confirmar e Salvar';
+
     document.getElementById('desc').value = lastPaidBill.desc;
     document.getElementById('category').value = lastPaidBill.category;
     document.getElementById('amount').value = lastPaidBill.amount;
     document.getElementById('dueDate').value = addOneMonth(lastPaidBill.dueDate);
+    document.getElementById('notes').value = lastPaidBill.notes || '';
 
     document.getElementById('formModal').classList.add('active');
   };
@@ -596,7 +705,9 @@
         statusFilter === 'paid' ? b.paid : true;
 
       const matchesSearch =
-        !searchQuery || normalizeText(b.desc).includes(searchQuery);
+        !searchQuery ||
+        normalizeText(b.desc).includes(searchQuery) ||
+        normalizeText(b.notes).includes(searchQuery);
 
       return matchesStatus && matchesSearch;
     });
@@ -612,17 +723,25 @@
       if (bill.paid) badgeHtml = `<span class="badge badge-paid">Pago</span>`;
       else if (isOverdue) badgeHtml = `<span class="badge badge-overdue">Vencida</span>`;
 
+      const notesHtml = bill.notes
+        ? `<div class="bill-notes">${escapeHTML(bill.notes)}</div>`
+        : '';
+
       return `
         <div class="bill-item ${bill.paid ? 'paid' : ''}">
           <div class="bill-info">
-            <div class="bill-title">${bill.desc} ${badgeHtml}</div>
-            <div class="bill-meta">Vencimento: <strong>${formatDateBR(bill.dueDate)}</strong> • ${bill.category}</div>
+            <div class="bill-title">${escapeHTML(bill.desc)} ${badgeHtml}</div>
+            <div class="bill-meta">Vencimento: <strong>${formatDateBR(bill.dueDate)}</strong> • ${escapeHTML(bill.category)}</div>
+            ${notesHtml}
           </div>
           <div class="bill-right">
             <div class="bill-amount">${formatCurrency(bill.amount)}</div>
             <div class="bill-actions">
               <button class="btn-sm btn-pay" onclick="togglePaid('${bill.id}')">
                 ${bill.paid ? '↩ Reabrir' : '✓ Pagar'}
+              </button>
+              <button class="btn-sm btn-edit" onclick="editBill('${bill.id}')" title="Editar valor, observação ou dados">
+                Editar
               </button>
               <button class="btn-sm btn-copy" onclick="copyBill('${bill.id}')" title="Copiar dados desta conta">
                 Copiar
