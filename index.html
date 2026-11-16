@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Controle de Contas & Carro</title>
+  <title>Eduardo • Controle Financeiro & Carro</title>
   <style>
     :root {
-      /* Tema Claro (Pastel Suave) */
+      /* Tema Claro (Paleta Pastel Suave) */
       --bg: #f8f7f4;
       --surface: #ffffff;
       --surface-paid: #fcfbf9;
+      --header-home: #3d5a7c;
+      --header-home-text: #ffffff;
+      --card-contas: #7c9cbf;
+      --card-carro: #5c947c;
+      --card-adm: #7c77a6;
       --debit-bg: #fdf5f6;
       --debit-border: #f3dce0;
       --credit-bg: #f2f8fd;
@@ -42,8 +47,8 @@
       --text: #3b424c;
       --muted: #7e8794;
       --border: #eae6df;
-      --shadow: 0 2px 6px rgba(59, 66, 76, 0.03);
-      --radius: 14px;
+      --shadow: 0 4px 12px rgba(59, 66, 76, 0.05);
+      --radius: 16px;
     }
 
     /* Tema Escuro (Dark Mode Pastel) */
@@ -51,6 +56,11 @@
       --bg: #16191e;
       --surface: #1f242c;
       --surface-paid: #1a1e25;
+      --header-home: #1f2937;
+      --header-home-text: #e2e8f0;
+      --card-contas: #4d6e94;
+      --card-carro: #3e6b58;
+      --card-adm: #54507a;
       --debit-bg: #271f23;
       --debit-border: #3d2c33;
       --credit-bg: #1d2632;
@@ -91,72 +101,289 @@
     body {
       background: var(--bg);
       color: var(--text);
-      padding: 18px 18px 88px 18px;
+      min-height: 100vh;
       line-height: 1.5;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    .container {
-      max-width: 940px;
+    /* ================= TELA INICIAL (HOME) ================= */
+    .home-header {
+      background: var(--header-home);
+      color: var(--header-home-text);
+      padding: 18px 20px 22px 20px;
+      border-bottom-left-radius: 22px;
+      border-bottom-right-radius: 22px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .home-header-inner {
+      max-width: 680px;
       margin: 0 auto;
-    }
-
-    /* Abas de Navegação Principal */
-    .nav-tabs {
       display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-      background: var(--surface);
-      padding: 5px;
-      border-radius: 13px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      width: fit-content;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .nav-tab {
-      padding: 8px 16px;
-      border-radius: 9px;
-      font-size: 0.9rem;
-      font-weight: 700;
+    .home-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-btn-header {
       background: transparent;
-      color: var(--muted);
+      color: var(--header-home-text);
       border: none;
+      padding: 6px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background 0.15s ease;
     }
 
-    .nav-tab:hover {
-      color: var(--text);
+    .icon-btn-header:hover {
+      background: rgba(255, 255, 255, 0.12);
     }
 
-    .nav-tab.active {
-      background: var(--primary);
+    .home-username {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .bell-badge {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      background: #e06d7a;
       color: #ffffff;
-    }
-
-    body.dark .nav-tab.active {
-      color: #16191e;
-    }
-
-    /* Cabeçalho */
-    header {
+      font-size: 0.68rem;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      border-radius: 999px;
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--header-home);
+    }
+
+    .home-container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 22px 18px 36px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .home-status-bar {
+      display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 0 4px;
+    }
+
+    /* Cartões Principais Estilo Anexo */
+    .menu-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      padding: 26px 24px;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 6px 16px rgba(59, 66, 76, 0.12);
+      transition: transform 0.15s ease, filter 0.15s ease;
+      text-align: left;
+      border: none;
+      width: 100%;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+    }
+
+    .menu-card:active {
+      transform: scale(0.99);
+    }
+
+    /* Curvas decorativas suaves ao fundo igual ao anexo */
+    .menu-card::before {
+      content: "";
+      position: absolute;
+      right: -35px;
+      top: -45px;
+      width: 190px;
+      height: 220px;
+      border-radius: 50%;
+      border: 22px solid rgba(255, 255, 255, 0.11);
+      pointer-events: none;
+    }
+
+    .menu-card::after {
+      content: "";
+      position: absolute;
+      right: 35px;
+      bottom: -75px;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+    }
+
+    .menu-card.card-contas { background: var(--card-contas); }
+    .menu-card.card-carro { background: var(--card-carro); }
+    .menu-card.card-adm { background: var(--card-adm); }
+
+    .menu-card-text {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .menu-card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .menu-card-desc {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.92);
+      line-height: 1.35;
+      max-width: 240px;
+    }
+
+    .menu-card-desc strong {
+      font-weight: 700;
+    }
+
+    .menu-card-icon {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+
+    /* ================= DRAWER MENU LATERAL (TRÊS RISCOS) ================= */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 20, 28, 0.5);
+      backdrop-filter: blur(2px);
+      display: none;
+      z-index: 60;
+    }
+
+    .drawer-backdrop.active {
+      display: block;
+    }
+
+    .drawer-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 290px;
+      max-width: 84vw;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 6px 0 24px rgba(0, 0, 0, 0.2);
+      z-index: 65;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .drawer-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .drawer-item {
+      width: 100%;
+      justify-content: flex-start;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .drawer-item:hover {
+      border-color: var(--primary);
+    }
+
+    /* ================= TELAS INTERNAS ================= */
+    .subpage-wrapper {
+      max-width: 940px;
+      margin: 0 auto;
+      padding: 16px 18px 88px 18px;
+    }
+
+    .subpage-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       margin-bottom: 14px;
     }
 
-    .title-area {
+    .subpage-title-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    header h1 {
+    /* Botão Home apenas com ícone e nada escrito */
+    .btn-home-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-home-icon:hover {
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+
+    .subpage-title-group h1 {
       font-size: 1.35rem;
       font-weight: 700;
       color: var(--text);
@@ -176,14 +403,7 @@
       color: var(--warning);
     }
 
-    .header-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    /* Botões */
+    /* Botões Gerais */
     button {
       cursor: pointer;
       border: none;
@@ -239,9 +459,6 @@
       background: var(--primary-hover);
       transform: scale(1.05);
     }
-    .fab-add:active {
-      transform: scale(0.97);
-    }
 
     .btn-this-month {
       background: var(--warning-bg);
@@ -250,8 +467,6 @@
       padding: 8px 12px;
       font-size: 0.84rem;
     }
-    .btn-this-month:hover { filter: brightness(0.96); }
-    body.dark .btn-this-month:hover { filter: brightness(1.12); }
 
     .btn-today {
       background: var(--primary-soft);
@@ -268,16 +483,12 @@
     body.dark .btn-today.active-today {
       color: #16191e;
     }
-    .btn-today:hover { filter: brightness(0.96); }
-    body.dark .btn-today:hover { filter: brightness(1.12); }
 
     /* Botões de ação com fonte menor */
     .btn-sm { padding: 5px 9px; font-size: 0.75rem; border-radius: 7px; }
     .btn-pay { background: var(--success-bg); color: var(--success); }
     .btn-edit { background: var(--edit-bg); color: var(--edit); }
     .btn-copy { background: var(--primary-soft); color: var(--primary-text); }
-    .btn-sm:hover { filter: brightness(0.95); }
-    body.dark .btn-sm:hover { filter: brightness(1.15); }
 
     /* Botão Excluir (X) no canto superior direito do card */
     .btn-del-corner {
@@ -293,15 +504,9 @@
       color: var(--danger);
       opacity: 0.85;
     }
-    .btn-del-corner:hover {
-      opacity: 1;
-      filter: brightness(0.95);
-    }
-    body.dark .btn-del-corner:hover {
-      filter: brightness(1.15);
-    }
+    .btn-del-corner:hover { opacity: 1; }
 
-    /* Resumos lado a lado e sem quadros (visual limpo) */
+    /* Resumos lado a lado e sem quadros */
     .summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -409,13 +614,11 @@
       box-shadow: var(--shadow);
     }
 
-    /* Fundo vermelho bem fraquinho para Débitos */
     .bill-item.debit-item {
       background: var(--debit-bg);
       border-color: var(--debit-border);
     }
 
-    /* Fundo azul bem clarinho para Créditos */
     .bill-item.credit-item {
       background: var(--credit-bg);
       border-color: var(--credit-border);
@@ -541,21 +744,9 @@
       gap: 12px;
     }
 
-    .adm-card h2 {
-      font-size: 1.1rem;
-    }
-
-    .adm-card p {
-      font-size: 0.86rem;
-      color: var(--muted);
-    }
-
-    .adm-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
+    .adm-card h2 { font-size: 1.1rem; }
+    .adm-card p { font-size: 0.86rem; color: var(--muted); }
+    .adm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
 
     /* Modais */
     .modal-backdrop {
@@ -567,7 +758,7 @@
       align-items: center;
       justify-content: center;
       padding: 16px;
-      z-index: 50;
+      z-index: 70;
     }
 
     .modal-backdrop.active { display: flex; }
@@ -575,7 +766,7 @@
     .modal {
       background: var(--surface);
       width: 100%;
-      max-width: 450px;
+      max-width: 470px;
       border-radius: var(--radius);
       padding: 24px;
       border: 1px solid var(--border);
@@ -584,62 +775,239 @@
       overflow-y: auto;
     }
 
-    .modal h2 {
-      font-size: 1.2rem;
-      margin-bottom: 6px;
+    .modal.modal-wide {
+      max-width: 780px;
     }
 
-    .modal p.subtitle {
-      font-size: 0.88rem;
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
+    .modal h2 { font-size: 1.2rem; margin-bottom: 6px; }
+    .modal p.subtitle { font-size: 0.88rem; color: var(--muted); margin-bottom: 16px; }
 
     .form-group {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
 
-    .form-group label {
-      font-size: 0.85rem;
-      font-weight: 600;
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
+    .form-group label { font-size: 0.84rem; font-weight: 600; }
     .form-group input, .form-group select, .form-group textarea { width: 100%; }
 
     .modal-footer {
       display: flex;
       justify-content: flex-end;
       gap: 8px;
-      margin-top: 20px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    /* Lista de Lembretes (Sino) */
+    .reminder-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .reminder-item {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .reminder-item.overdue {
+      background: var(--danger-bg);
+      border-color: var(--debit-border);
+    }
+
+    .reminder-item.soon {
+      background: var(--warning-bg);
+      border-color: var(--warning-border);
+    }
+
+    .reminder-info strong {
+      display: block;
+      font-size: 0.92rem;
+    }
+
+    .reminder-info span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .reminder-val {
+      font-weight: 700;
+      font-size: 0.92rem;
+      white-space: nowrap;
+    }
+
+    /* Tabela de Relatório para Impressão */
+    .report-area {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    .report-summary-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      background: var(--bg);
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 0.86rem;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+
+    .report-table th, .report-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+    }
+
+    .report-table th {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
     }
 
     .hidden { display: none !important; }
+
+    /* Estilos específicos de impressão */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printReportContainer, #printReportContainer * {
+        visibility: visible;
+      }
+      #printReportContainer {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 12px;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- Navegação entre Aba 1 (Contas), Aba 2 (Carro) e Aba 3 (ADM) -->
-  <nav class="nav-tabs">
-    <button type="button" class="nav-tab active" id="tab-contas" onclick="switchPage('contas')">Contas a Pagar</button>
-    <button type="button" class="nav-tab" id="tab-carro" onclick="switchPage('carro')">Carro</button>
-    <button type="button" class="nav-tab" id="tab-adm" onclick="switchPage('adm')">ADM</button>
-  </nav>
+<!-- ==================== TELA INICIAL (APRESENTAÇÃO) ==================== -->
+<div id="homeScreen">
+  <header class="home-header">
+    <div class="home-header-inner">
+      <div class="home-left">
+        <!-- Menu três riscos -->
+        <button type="button" class="icon-btn-header" onclick="openDrawer()" title="Menu e Relatórios" aria-label="Menu">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <span class="home-username">EDUARDO</span>
+      </div>
 
-  <header>
-    <div class="title-area">
-      <h1 id="pageTitle">Contas a Pagar</h1>
-      <span id="syncStatus" class="sync-badge offline">Conectando...</span>
-    </div>
-    <div class="header-actions">
-      <button type="button" class="btn-theme" id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">🌙</button>
+      <!-- Ícone de Sino (Lembretes de Vencimento) -->
+      <button type="button" class="icon-btn-header" onclick="openRemindersModal()" title="Lembretes e Vencimentos" aria-label="Lembretes">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6v-5c0-3.07-1.63-5.64-4.5-6.32V4a2.5 2.5 0 0 0-5 0v.68C6.64 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z"/>
+        </svg>
+        <span class="bell-badge hidden" id="bellCount">0</span>
+      </button>
     </div>
   </header>
 
-  <!-- Conteúdo das Abas 1 e 2 (Contas e Carro) -->
+  <main class="home-container">
+    <div class="home-status-bar">
+      <span id="homeReminderHint">Verificando vencimentos próximos...</span>
+      <span id="syncStatusHome">Conectando...</span>
+    </div>
+
+    <!-- Card 1: Contas a Pagar -->
+    <button type="button" class="menu-card card-contas" onclick="switchPage('contas')">
+      <div class="menu-card-text">
+        <span class="menu-card-title">CONTAS A PAGAR</span>
+        <span class="menu-card-desc">Gerencie seus <strong>pagamentos e vencimentos</strong> mensais</span>
+      </div>
+      <div class="menu-card-icon">
+        <svg width="54" height="54" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" opacity="0.25"/>
+          <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+        </svg>
+      </div>
+    </button>
+
+    <!-- Card 2: Carro -->
+    <button type="button" class="menu-card card-carro" onclick="switchPage('carro')">
+      <div class="menu-card-text">
+        <span class="menu-card-title">CARRO</span>
+        <span class="menu-card-desc">Controle de <strong>ganhos app, combustível</strong> e manutenções</span>
+      </div>
+      <div class="menu-card-icon">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+        </svg>
+      </div>
+    </button>
+
+    <!-- Card 3: ADM -->
+    <button type="button" class="menu-card card-adm" onclick="switchPage('adm')">
+      <div class="menu-card-text">
+        <span class="menu-card-title">ADM</span>
+        <span class="menu-card-desc">Exportação de <strong>backup e importação</strong> de planilhas</span>
+      </div>
+      <div class="menu-card-icon">
+        <svg width="54" height="54" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+        </svg>
+      </div>
+    </button>
+  </main>
+</div>
+
+<!-- ==================== TELAS INTERNAS (CONTAS, CARRO, ADM) ==================== -->
+<div id="appScreens" class="subpage-wrapper hidden">
+  <div class="subpage-topbar">
+    <div class="subpage-title-group">
+      <!-- Apenas ícone de Home, sem nada escrito -->
+      <button type="button" class="btn-home-icon" onclick="goHome()" aria-label="Início">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </button>
+      <h1 id="pageTitle">Contas a Pagar</h1>
+      <span id="syncStatus" class="sync-badge offline">Conectando...</span>
+    </div>
+    <div>
+      <button type="button" class="btn-theme" id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">🌙</button>
+    </div>
+  </div>
+
+  <!-- Conteúdo das Telas Contas e Carro -->
   <div id="recordsView">
     <!-- Resumo Financeiro Limpo e Lado a Lado -->
     <section class="summary">
@@ -700,7 +1068,7 @@
     </main>
   </div>
 
-  <!-- Conteúdo da Aba 3: ADM (Importar e Exportar) -->
+  <!-- Conteúdo da Tela ADM -->
   <section id="admView" class="hidden">
     <div class="adm-grid">
       <div class="adm-card">
@@ -722,8 +1090,8 @@
         <div class="form-group" style="margin-bottom: 4px;">
           <label for="importTarget">Destino da Importação:</label>
           <select id="importTarget">
-            <option value="contas">Aba 1: Contas a Pagar</option>
-            <option value="carro">Aba 2: Carro</option>
+            <option value="contas">Contas a Pagar</option>
+            <option value="carro">Carro</option>
           </select>
         </div>
         <div class="adm-actions">
@@ -738,9 +1106,93 @@
 </div>
 
 <!-- Botão Flutuante Circular (+) no canto inferior direito -->
-<button type="button" class="fab-add" id="btnNewItem" onclick="openNewModal()" title="Novo lançamento">+</button>
+<button type="button" class="fab-add hidden" id="btnNewItem" onclick="openNewModal()" title="Novo lançamento">+</button>
 
-<!-- Modal: Novo / Editar / Copiar / Próximo Mês -->
+<!-- ==================== MENU LATERAL (TRÊS RISCOS) ==================== -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()">
+  <aside class="drawer-panel" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <h3>Menu • Eduardo</h3>
+      <button type="button" class="btn-outline btn-sm" onclick="closeDrawer()">✕</button>
+    </div>
+
+    <button type="button" class="drawer-item" onclick="openReportModal()">
+      🖨️ Relatórios Periódicos (Impressão)
+    </button>
+
+    <button type="button" class="drawer-item" onclick="closeDrawer(); openRemindersModal();">
+      🔔 Lembretes de Vencimento
+    </button>
+
+    <button type="button" class="drawer-item" onclick="toggleTheme()">
+      🌓 Alternar Tema Claro / Escuro
+    </button>
+  </aside>
+</div>
+
+<!-- ==================== MODAL: RELATÓRIOS PERIÓDICOS ==================== -->
+<div class="modal-backdrop" id="reportModal">
+  <div class="modal modal-wide">
+    <div class="no-print">
+      <h2>Relatórios Periódicos para Impressão</h2>
+      <p class="subtitle">Selecione a base e o período desejado para gerar o relatório em tela.</p>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="reportSource">Base de Dados</label>
+          <select id="reportSource" onchange="generateReport()">
+            <option value="contas">Contas a Pagar</option>
+            <option value="carro">Carro</option>
+            <option value="ambos">Ambas (Contas + Carro)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reportPeriodPreset">Período Rápido</label>
+          <select id="reportPeriodPreset" onchange="applyReportPreset()">
+            <option value="thisMonth">Este Mês</option>
+            <option value="today">Hoje</option>
+            <option value="lastMonth">Mês Passado</option>
+            <option value="custom">Período Personalizado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="reportStart">Data Inicial</label>
+          <input type="date" id="reportStart" onchange="generateReport()" />
+        </div>
+        <div class="form-group">
+          <label for="reportEnd">Data Final</label>
+          <input type="date" id="reportEnd" onchange="generateReport()" />
+        </div>
+      </div>
+    </div>
+
+    <div id="printReportContainer" class="report-area">
+      <div id="reportOutput"></div>
+    </div>
+
+    <div class="modal-footer no-print">
+      <button type="button" class="btn-outline" onclick="closeModal('reportModal')">Fechar</button>
+      <button type="button" class="btn-primary" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: LEMBRETES (SINO) ==================== -->
+<div class="modal-backdrop" id="remindersModal">
+  <div class="modal">
+    <h2>Lembretes & Vencimentos</h2>
+    <p class="subtitle">Contas pendentes vencidas ou com vencimento nos próximos 5 dias:</p>
+    <div id="remindersList" class="reminder-list"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn-primary" onclick="closeModal('remindersModal')">Entendi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: NOVO / EDITAR / COPIAR ==================== -->
 <div class="modal-backdrop" id="formModal">
   <div class="modal">
     <h2 id="modalTitle">Novo Pagamento</h2>
@@ -770,7 +1222,8 @@
       </div>
       <div class="form-group">
         <label for="amount">Valor (R$) *</label>
-        <input type="number" id="amount" step="0.01" min="0.01" placeholder="0,00" required />
+        <!-- min="0" permite salvar lançamentos com valor R$ 0,00 -->
+        <input type="number" id="amount" step="0.01" min="0" placeholder="0,00" required />
       </div>
       <div class="form-group">
         <label for="dueDate" id="dueDateLabel">Data de Vencimento *</label>
@@ -788,7 +1241,7 @@
   </div>
 </div>
 
-<!-- Modal: Pergunta após pagar/receber -->
+<!-- ==================== MODAL: PERGUNTA APÓS PAGAR ==================== -->
 <div class="modal-backdrop" id="nextMonthPromptModal">
   <div class="modal">
     <h2 id="promptTitle">Marcado como pago!</h2>
@@ -830,7 +1283,6 @@
   const app = initializeApp({ databaseURL: FIREBASE_DATABASE_URL });
   const db = getDatabase(app);
 
-  // Duas coleções separadas no mesmo banco: 'contas' e 'carro'
   const refs = {
     contas: ref(db, 'contas'),
     carro: ref(db, 'carro')
@@ -841,7 +1293,7 @@
     carro: []
   };
 
-  let currentPage = 'contas'; // 'contas', 'carro' ou 'adm'
+  let currentPage = 'home'; // 'home', 'contas', 'carro' ou 'adm'
   let onlyTodayFilter = false;
   let lastPaidBill = null;
 
@@ -870,6 +1322,7 @@
 
   const monthFilter = document.getElementById('monthFilter');
   const syncStatus = document.getElementById('syncStatus');
+  const syncStatusHome = document.getElementById('syncStatusHome');
 
   function getTodayLocalStr() {
     const now = new Date();
@@ -877,6 +1330,15 @@
     const m = String(now.getMonth() + 1).padStart(2, '0');
     const d = String(now.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
+  }
+
+  function addDaysToStr(dateStr, days) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m - 1, d + days);
+    const ny = dt.getFullYear();
+    const nm = String(dt.getMonth() + 1).padStart(2, '0');
+    const nd = String(dt.getDate()).padStart(2, '0');
+    return `${ny}-${nm}-${nd}`;
   }
 
   function getCurrentMonthStr() {
@@ -890,18 +1352,52 @@
     document.getElementById('countCarro').textContent = dataStore.carro.length;
   }
 
+  // Atualiza lembretes e sino na tela inicial
+  function getUpcomingReminders() {
+    const todayStr = getTodayLocalStr();
+    const limitStr = addDaysToStr(todayStr, 5); // próximos 5 dias
+
+    const allPending = [
+      ...dataStore.contas.map(item => ({ ...item, origem: 'Contas a Pagar' })),
+      ...dataStore.carro
+        .filter(item => item.maintType !== 'Ganhos App')
+        .map(item => ({ ...item, origem: 'Carro' }))
+    ].filter(item => !item.paid && item.dueDate && item.dueDate <= limitStr);
+
+    return allPending.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+  }
+
+  function updateBellReminders() {
+    const upcoming = getUpcomingReminders();
+    const badge = document.getElementById('bellCount');
+    const hint = document.getElementById('homeReminderHint');
+
+    if (upcoming.length > 0) {
+      badge.textContent = upcoming.length;
+      badge.classList.remove('hidden');
+      const uniqueDays = [...new Set(upcoming.map(i => formatDatePlain(i.dueDate)))];
+      hint.textContent = `🔔 ${upcoming.length} vencimento(s) próximo(s): ${uniqueDays.slice(0, 3).join(', ')}`;
+    } else {
+      badge.classList.add('hidden');
+      hint.textContent = 'Nenhum vencimento nos próximos 5 dias';
+    }
+  }
+
   // Escuta alterações de 'contas' em tempo real
   onValue(refs.contas, (snapshot) => {
     const data = snapshot.val();
     dataStore.contas = data ? Object.values(data) : [];
     syncStatus.textContent = "Sincronizado";
     syncStatus.classList.remove("offline");
+    syncStatusHome.textContent = "● Nuvem ativa";
     updateAdmCounts();
+    updateBellReminders();
     if (currentPage === 'contas') render();
   }, (error) => {
     console.error(error);
     syncStatus.textContent = "Erro de conexão";
     syncStatus.classList.add("offline");
+    syncStatusHome.textContent = "Offline";
   });
 
   // Escuta alterações de 'carro' em tempo real
@@ -909,11 +1405,12 @@
     const data = snapshot.val();
     dataStore.carro = data ? Object.values(data) : [];
     updateAdmCounts();
+    updateBellReminders();
     if (currentPage === 'carro') render();
   });
 
   function populateCategorySelect() {
-    if (currentPage === 'adm') return;
+    if (currentPage === 'adm' || currentPage === 'home') return;
     const select = document.getElementById('category');
     select.innerHTML = CATEGORIES[currentPage]
       .map(cat => `<option value="${cat}">${cat}</option>`)
@@ -924,15 +1421,23 @@
     document.getElementById('btnToday').classList.toggle('active-today', onlyTodayFilter);
   }
 
-  // Alterna entre Aba 1 (Contas), Aba 2 (Carro) e Aba 3 (ADM)
+  // Voltar para Tela Inicial
+  window.goHome = function() {
+    currentPage = 'home';
+    document.getElementById('homeScreen').classList.remove('hidden');
+    document.getElementById('appScreens').classList.add('hidden');
+    document.getElementById('btnNewItem').classList.add('hidden');
+    updateBellReminders();
+  };
+
+  // Navegar para Contas, Carro ou ADM
   window.switchPage = function(page) {
     currentPage = page;
     onlyTodayFilter = false;
     syncTodayButtonUI();
 
-    document.getElementById('tab-contas').classList.toggle('active', page === 'contas');
-    document.getElementById('tab-carro').classList.toggle('active', page === 'carro');
-    document.getElementById('tab-adm').classList.toggle('active', page === 'adm');
+    document.getElementById('homeScreen').classList.add('hidden');
+    document.getElementById('appScreens').classList.remove('hidden');
 
     const isAdm = page === 'adm';
     const isCarro = page === 'carro';
@@ -945,7 +1450,7 @@
     document.getElementById('btnNewItem').classList.toggle('hidden', isAdm);
 
     if (isAdm) {
-      document.getElementById('pageTitle').textContent = 'Administração & Backup';
+      document.getElementById('pageTitle').textContent = 'ADM';
       updateAdmCounts();
       return;
     }
@@ -963,10 +1468,165 @@
     render();
   };
 
-  populateCategorySelect();
+  // Drawer Menu (Três Riscos)
+  window.openDrawer = function() {
+    document.getElementById('drawerBackdrop').classList.add('active');
+  };
+
+  window.closeDrawer = function() {
+    document.getElementById('drawerBackdrop').classList.remove('active');
+  };
+
+  // Modal de Lembretes (Sino)
+  window.openRemindersModal = function() {
+    const upcoming = getUpcomingReminders();
+    const todayStr = getTodayLocalStr();
+    const listEl = document.getElementById('remindersList');
+
+    if (upcoming.length === 0) {
+      listEl.innerHTML = `<div class="empty-state">Nenhuma conta vencida ou próxima do vencimento nos próximos 5 dias.</div>`;
+    } else {
+      listEl.innerHTML = upcoming.map(item => {
+        const isOverdue = item.dueDate < todayStr;
+        const isToday = item.dueDate === todayStr;
+        const tag = isOverdue ? 'VENCIDA' : (isToday ? 'VENCE HOJE' : 'PRÓXIMA');
+        return `
+          <div class="reminder-item ${isOverdue ? 'overdue' : 'soon'}">
+            <div class="reminder-info">
+              <strong>${escapeHTML(item.desc)} (${tag})</strong>
+              <span>Dia: ${formatDatePlain(item.dueDate)} • ${item.origem}</span>
+            </div>
+            <div class="reminder-val">${formatCurrency(item.amount)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('remindersModal').classList.add('active');
+  };
+
+  // Modal de Relatórios Periódicos
+  window.openReportModal = function() {
+    closeDrawer();
+    document.getElementById('reportPeriodPreset').value = 'thisMonth';
+    applyReportPreset();
+    document.getElementById('reportModal').classList.add('active');
+  };
+
+  window.applyReportPreset = function() {
+    const preset = document.getElementById('reportPeriodPreset').value;
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth();
+
+    const startInput = document.getElementById('reportStart');
+    const endInput = document.getElementById('reportEnd');
+
+    if (preset === 'today') {
+      const today = getTodayLocalStr();
+      startInput.value = today;
+      endInput.value = today;
+    } else if (preset === 'thisMonth') {
+      const firstDay = new Date(y, m, 1);
+      const lastDay = new Date(y, m + 1, 0);
+      startInput.value = `${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, '0')}-01`;
+      endInput.value = `${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`;
+    } else if (preset === 'lastMonth') {
+      const firstDay = new Date(y, m - 1, 1);
+      const lastDay = new Date(y, m, 0);
+      startInput.value = `${firstDay.getFullYear()}-${String(firstDay.getMonth() + 1).padStart(2, '0')}-01`;
+      endInput.value = `${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`;
+    }
+    generateReport();
+  };
+
+  window.generateReport = function() {
+    const source = document.getElementById('reportSource').value;
+    const start = document.getElementById('reportStart').value;
+    const end = document.getElementById('reportEnd').value;
+    const out = document.getElementById('reportOutput');
+
+    let records = [];
+    if (source === 'contas' || source === 'ambos') {
+      records.push(...dataStore.contas.map(i => ({ ...i, base: 'Contas a Pagar' })));
+    }
+    if (source === 'carro' || source === 'ambos') {
+      records.push(...dataStore.carro.map(i => ({ ...i, base: 'Carro' })));
+    }
+
+    const filtered = records
+      .filter(r => (!start || r.dueDate >= start) && (!end || r.dueDate <= end))
+      .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+    let totalCredits = 0;
+    let totalDebits = 0;
+
+    filtered.forEach(r => {
+      if (r.base === 'Carro' && r.maintType === 'Ganhos App') {
+        totalCredits += Number(r.amount);
+      } else {
+        totalDebits += Number(r.amount);
+      }
+    });
+
+    const net = totalCredits - totalDebits;
+    const titleLabel = source === 'contas' ? 'Contas a Pagar' : (source === 'carro' ? 'Carro' : 'Geral (Contas + Carro)');
+
+    if (filtered.length === 0) {
+      out.innerHTML = `<div class="empty-state">Nenhum lançamento encontrado no período selecionado.</div>`;
+      return;
+    }
+
+    out.innerHTML = `
+      <h3 style="margin-bottom:4px;">Relatório • ${titleLabel}</h3>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">
+        Período: ${start ? formatDatePlain(start) : 'Início'} até ${end ? formatDatePlain(end) : 'Hoje'} • ${filtered.length} registro(s)
+      </p>
+      <div class="report-summary-box">
+        ${totalCredits > 0 ? `<div><strong>Créditos:</strong> ${formatCurrency(totalCredits)}</div>` : ''}
+        <div><strong>Débitos:</strong> ${formatCurrency(totalDebits)}</div>
+        ${totalCredits > 0 ? `<div><strong>Saldo Líquido:</strong> ${formatCurrency(net)}</div>` : ''}
+      </div>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Tipo / Categoria</th>
+            <th>Status</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(r => {
+            const isCredit = r.base === 'Carro' && r.maintType === 'Ganhos App';
+            const typeInfo = r.maintType ? `${r.maintType} (${r.category})` : r.category;
+            return `
+              <tr>
+                <td>${formatDatePlain(r.dueDate)}</td>
+                <td>${escapeHTML(r.desc)}${r.notes ? `<br><small style="color:var(--muted)">${escapeHTML(r.notes)}</small>` : ''}</td>
+                <td>${escapeHTML(typeInfo)}</td>
+                <td>${r.paid ? (isCredit ? 'Recebido' : 'Pago') : 'Pendente'}</td>
+                <td style="font-weight:700;">${isCredit ? '+ ' : ''}${formatCurrency(r.amount)}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  };
 
   function formatCurrency(val) {
     return Number(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function formatDatePlain(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const localDate = new Date(y, m - 1, d);
+    const weekday = WEEKDAYS[localDate.getDay()] || '';
+    const dd = String(d).padStart(2, '0');
+    const mm = String(m).padStart(2, '0');
+    return `${dd}/${mm}/${y} (${weekday})`;
   }
 
   function formatDateWithWeekday(dateStr) {
@@ -1012,7 +1672,6 @@
     render();
   };
 
-  // Botão "Hoje" -> filtra apenas os lançamentos da data de hoje
   window.filterToday = function() {
     onlyTodayFilter = !onlyTodayFilter;
     if (onlyTodayFilter) {
@@ -1036,7 +1695,7 @@
   };
 
   window.openNewModal = function() {
-    if (currentPage === 'adm') return;
+    if (currentPage === 'adm' || currentPage === 'home') return;
     const isCarro = currentPage === 'carro';
     document.getElementById('editBillId').value = '';
     document.getElementById('modalTitle').textContent = isCarro ? 'Novo Lançamento - Carro' : 'Novo Pagamento';
@@ -1103,7 +1762,8 @@
     const editingId = document.getElementById('editBillId').value;
     const desc = document.getElementById('desc').value.trim();
     const category = document.getElementById('category').value;
-    const amount = parseFloat(document.getElementById('amount').value);
+    const rawAmount = parseFloat(document.getElementById('amount').value);
+    const amount = isNaN(rawAmount) ? 0 : rawAmount;
     const dueDate = document.getElementById('dueDate').value;
     const notes = document.getElementById('notes').value.trim();
     const maintType = currentPage === 'carro' ? document.getElementById('maintType').value : null;
@@ -1196,7 +1856,7 @@
   };
 
   window.render = function() {
-    if (currentPage === 'adm') return;
+    if (currentPage === 'adm' || currentPage === 'home') return;
 
     const selectedMonth = monthFilter.value;
     const statusFilter = document.getElementById('statusFilter').value;
@@ -1208,7 +1868,6 @@
 
     const items = dataStore[currentPage] || [];
 
-    // Filtra por hoje ou pelo mês selecionado
     const periodBills = items
       .filter(b => {
         if (!b.dueDate) return false;
@@ -1383,11 +2042,12 @@
           if (Array.isArray(imported)) {
             imported.forEach((item, index) => {
               const safeId = item.id ? String(item.id) : `${Date.now()}_${index}`;
+              const parsedVal = parseFloat(item.amount);
               updates[safeId] = {
                 id: safeId,
                 desc: String(item.desc || '').trim(),
                 category: item.category || (targetKey === 'carro' ? 'Mecânica Geral' : 'Outros'),
-                amount: parseFloat(item.amount) || 0,
+                amount: isNaN(parsedVal) ? 0 : parsedVal,
                 dueDate: String(item.dueDate || '').trim(),
                 notes: String(item.notes || '').trim(),
                 paid: Boolean(item.paid),
@@ -1409,17 +2069,18 @@
             const row = {};
             headers.forEach((h, idx) => { row[h] = cols[idx] || ''; });
 
-            if (!row.desc || !row.amount || !row.dueDate) continue;
+            if (!row.desc || row.amount === '' || !row.dueDate) continue;
 
             const safeId = row.id ? String(row.id) : `${Date.now()}_${i}`;
-            const parsedAmount = parseFloat(String(row.amount).replace(/\./g, '').replace(',', '.')) || parseFloat(String(row.amount).replace(',', '.'));
+            const parsedAmount = parseFloat(String(row.amount).replace(/\./g, '').replace(',', '.'));
+            const finalAmount = isNaN(parsedAmount) ? 0 : parsedAmount;
             const isPaid = String(row.paid).toUpperCase() === 'TRUE' || String(row.paid).toLowerCase() === 'sim';
 
             updates[safeId] = {
               id: safeId,
               desc: row.desc,
               category: row.category || (targetKey === 'carro' ? 'Mecânica Geral' : 'Outros'),
-              amount: parsedAmount,
+              amount: finalAmount,
               dueDate: row.dueDate,
               notes: row.notes || '',
               paid: isPaid,
@@ -1432,7 +2093,7 @@
 
         if (count > 0) {
           await update(refs[targetKey], updates);
-          alert(`${count} registro(s) importado(s) na aba "${targetKey === 'carro' ? 'Carro' : 'Contas a Pagar'}" sem apagar os existentes!`);
+          alert(`${count} registro(s) importado(s) em "${targetKey === 'carro' ? 'Carro' : 'Contas a Pagar'}" sem apagar os existentes!`);
         } else {
           alert('Nenhuma linha válida encontrada. Verifique os títulos desc, amount e dueDate.');
         }
