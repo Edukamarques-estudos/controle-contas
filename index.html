@@ -35,6 +35,8 @@
       --corr-bg: #fae8df;
       --fuel: #845994;
       --fuel-bg: #f1e4f6;
+      --asset: #5c7a47;
+      --asset-bg: #e6f0df;
       --gain: #3b73a8;
       --gain-bg: #dcebfa;
       --text: #3b424c;
@@ -74,6 +76,8 @@
       --corr-bg: #3b271d;
       --fuel: #c699d9;
       --fuel-bg: #322138;
+      --asset: #98bf7e;
+      --asset-bg: #25331d;
       --gain: #7cb8f0;
       --gain-bg: #1c324a;
       --text: #e2e8f0;
@@ -460,6 +464,7 @@
     .badge-prev { background: var(--prev-bg); color: var(--prev); }
     .badge-corr { background: var(--corr-bg); color: var(--corr); }
     .badge-fuel { background: var(--fuel-bg); color: var(--fuel); }
+    .badge-asset { background: var(--asset-bg); color: var(--asset); }
     .badge-gain { background: var(--gain-bg); color: var(--gain); }
 
     .bill-meta {
@@ -670,6 +675,7 @@
           <option value="Man. Preventiva">Man. Preventiva</option>
           <option value="Man. Corretiva">Man. Corretiva</option>
           <option value="Combustível">Combustível</option>
+          <option value="Compra de Ativo">Compra de Ativo</option>
           <option value="Ganhos App">Ganhos App (Crédito)</option>
         </select>
         <button type="button" class="btn-today" id="btnToday" onclick="filterToday()" title="Ver apenas lançamentos de hoje">
@@ -753,6 +759,7 @@
           <option value="Man. Preventiva">Man. Preventiva (Débito)</option>
           <option value="Man. Corretiva">Man. Corretiva (Débito)</option>
           <option value="Combustível">Combustível (Débito)</option>
+          <option value="Compra de Ativo">Compra de Ativo (Débito)</option>
           <option value="Ganhos App">Ganhos App (Crédito +)</option>
         </select>
       </div>
@@ -1297,6 +1304,7 @@
         let mClass = 'badge-prev';
         if (mType === 'Man. Corretiva') mClass = 'badge-corr';
         else if (mType === 'Combustível') mClass = 'badge-fuel';
+        else if (mType === 'Compra de Ativo') mClass = 'badge-asset';
         else if (mType === 'Ganhos App') mClass = 'badge-gain';
 
         maintRowHtml = `
