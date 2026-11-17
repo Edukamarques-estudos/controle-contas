@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>|||||| • Controle Financeiro & Carro</title>
+  <title>Eduardo • Controle Financeiro & Carro</title>
   <style>
     :root {
       /* Tema Claro (Paleta Pastel Suave) */
@@ -107,6 +107,12 @@
     }
 
     /* ================= TELA INICIAL (HOME) ================= */
+    #homeScreen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
     .home-header {
       background: var(--header-home);
       color: var(--header-home-text);
@@ -174,12 +180,14 @@
     }
 
     .home-container {
+      width: 100%;
       max-width: 680px;
       margin: 0 auto;
-      padding: 22px 18px 36px 18px;
+      padding: 22px 18px 24px 18px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      flex: 1;
     }
 
     .home-status-bar {
@@ -219,7 +227,6 @@
       transform: scale(0.99);
     }
 
-    /* Curvas decorativas suaves ao fundo igual ao anexo */
     .menu-card::before {
       content: "";
       position: absolute;
@@ -246,7 +253,6 @@
 
     .menu-card.card-contas { background: var(--card-contas); }
     .menu-card.card-carro { background: var(--card-carro); }
-    .menu-card.card-adm { background: var(--card-adm); }
 
     .menu-card-text {
       position: relative;
@@ -281,6 +287,37 @@
       opacity: 0.95;
     }
 
+    /* Rodapé discreto da Home com ADM pequeno */
+    .home-footer {
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 12px 18px 22px 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-adm-footer {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      opacity: 0.78;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-adm-footer:hover {
+      opacity: 1;
+      border-color: var(--card-adm);
+      color: var(--text);
+    }
+
     /* ================= DRAWER MENU LATERAL (TRÊS RISCOS) ================= */
     .drawer-backdrop {
       position: fixed;
@@ -307,7 +344,7 @@
       padding: 22px 18px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       box-shadow: 6px 0 24px rgba(0, 0, 0, 0.2);
       z-index: 65;
     }
@@ -484,8 +521,9 @@
       color: #16191e;
     }
 
-    /* Botões de ação com fonte menor */
+    /* Botões de ação com fonte menor e botões compactos só com ícone */
     .btn-sm { padding: 5px 9px; font-size: 0.75rem; border-radius: 7px; }
+    .btn-icon-only { padding: 5px 8px; min-width: 28px; height: 27px; }
     .btn-pay { background: var(--success-bg); color: var(--success); }
     .btn-edit { background: var(--edit-bg); color: var(--edit); }
     .btn-copy { background: var(--primary-soft); color: var(--primary-text); }
@@ -714,6 +752,7 @@
       display: flex;
       gap: 5px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .empty-state {
@@ -955,7 +994,6 @@
       </div>
       <div class="menu-card-icon">
         <svg width="54" height="54" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" opacity="0.25"/>
           <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
         </svg>
       </div>
@@ -973,20 +1011,17 @@
         </svg>
       </div>
     </button>
-
-    <!-- Card 3: ADM -->
-    <button type="button" class="menu-card card-adm" onclick="switchPage('adm')">
-      <div class="menu-card-text">
-        <span class="menu-card-title">ADM</span>
-        <span class="menu-card-desc">Exportação de <strong>backup e importação</strong> de planilhas</span>
-      </div>
-      <div class="menu-card-icon">
-        <svg width="54" height="54" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-        </svg>
-      </div>
-    </button>
   </main>
+
+  <!-- Rodapé com botão ADM pequeno para evitar clique acidental -->
+  <footer class="home-footer">
+    <button type="button" class="btn-adm-footer" onclick="switchPage('adm')" title="Administração, Backup e Importação">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+      </svg>
+      ADM
+    </button>
+  </footer>
 </div>
 
 <!-- ==================== TELAS INTERNAS (CONTAS, CARRO, ADM) ==================== -->
@@ -1222,7 +1257,6 @@
       </div>
       <div class="form-group">
         <label for="amount">Valor (R$) *</label>
-        <!-- min="0" permite salvar lançamentos com valor R$ 0,00 -->
         <input type="number" id="amount" step="0.01" min="0" placeholder="0,00" required />
       </div>
       <div class="form-group">
@@ -1293,7 +1327,7 @@
     carro: []
   };
 
-  let currentPage = 'home'; // 'home', 'contas', 'carro' ou 'adm'
+  let currentPage = 'home';
   let onlyTodayFilter = false;
   let lastPaidBill = null;
 
@@ -1352,10 +1386,9 @@
     document.getElementById('countCarro').textContent = dataStore.carro.length;
   }
 
-  // Atualiza lembretes e sino na tela inicial
   function getUpcomingReminders() {
     const todayStr = getTodayLocalStr();
-    const limitStr = addDaysToStr(todayStr, 5); // próximos 5 dias
+    const limitStr = addDaysToStr(todayStr, 5);
 
     const allPending = [
       ...dataStore.contas.map(item => ({ ...item, origem: 'Contas a Pagar' })),
@@ -1421,7 +1454,6 @@
     document.getElementById('btnToday').classList.toggle('active-today', onlyTodayFilter);
   }
 
-  // Voltar para Tela Inicial
   window.goHome = function() {
     currentPage = 'home';
     document.getElementById('homeScreen').classList.remove('hidden');
@@ -1430,7 +1462,6 @@
     updateBellReminders();
   };
 
-  // Navegar para Contas, Carro ou ADM
   window.switchPage = function(page) {
     currentPage = page;
     onlyTodayFilter = false;
@@ -1442,7 +1473,6 @@
     const isAdm = page === 'adm';
     const isCarro = page === 'carro';
 
-    // Remove o botão do dark mode na aba Carro
     themeToggleBtn.classList.toggle('hidden', isCarro);
 
     document.getElementById('recordsView').classList.toggle('hidden', isAdm);
@@ -1468,7 +1498,6 @@
     render();
   };
 
-  // Drawer Menu (Três Riscos)
   window.openDrawer = function() {
     document.getElementById('drawerBackdrop').classList.add('active');
   };
@@ -1477,7 +1506,6 @@
     document.getElementById('drawerBackdrop').classList.remove('active');
   };
 
-  // Modal de Lembretes (Sino)
   window.openRemindersModal = function() {
     const upcoming = getUpcomingReminders();
     const todayStr = getTodayLocalStr();
@@ -1505,7 +1533,6 @@
     document.getElementById('remindersModal').classList.add('active');
   };
 
-  // Modal de Relatórios Periódicos
   window.openReportModal = function() {
     closeDrawer();
     document.getElementById('reportPeriodPreset').value = 'thisMonth';
@@ -1950,6 +1977,20 @@
       return;
     }
 
+    // Ícones SVG compactos para Reabrir e Editar
+    const reopenIconSvg = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+        <path d="M3 3v5h5"></path>
+      </svg>
+    `;
+
+    const editPencilSvg = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+      </svg>
+    `;
+
     listEl.innerHTML = filteredBills.map(bill => {
       const isCredit = isCarro && bill.maintType === 'Ganhos App';
       const isOverdue = !bill.paid && bill.dueDate < todayStr;
@@ -1978,9 +2019,12 @@
         ? `<div class="bill-notes">${escapeHTML(bill.notes)}</div>`
         : '';
 
-      const payBtnLabel = bill.paid
-        ? '↩ Reabrir'
+      const payBtnContent = bill.paid
+        ? reopenIconSvg
         : (isCredit ? '✓ Receber' : '✓ Pagar');
+
+      const payBtnClass = bill.paid ? 'btn-sm btn-icon-only btn-pay' : 'btn-sm btn-pay';
+      const payBtnTitle = bill.paid ? 'Reabrir lançamento' : (isCredit ? 'Marcar como recebido' : 'Marcar como pago');
 
       const cardToneClass = isCredit ? 'credit-item' : 'debit-item';
 
@@ -1998,11 +2042,11 @@
               ${isCredit ? '+ ' : ''}${formatCurrency(bill.amount)}
             </div>
             <div class="bill-actions">
-              <button class="btn-sm btn-pay" onclick="togglePaid('${bill.id}')">
-                ${payBtnLabel}
+              <button class="${payBtnClass}" onclick="togglePaid('${bill.id}')" title="${payBtnTitle}" aria-label="${payBtnTitle}">
+                ${payBtnContent}
               </button>
-              <button class="btn-sm btn-edit" onclick="editBill('${bill.id}')" title="Editar valor, status ou dados">
-                Editar
+              <button class="btn-sm btn-icon-only btn-edit" onclick="editBill('${bill.id}')" title="Editar lançamento" aria-label="Editar">
+                ${editPencilSvg}
               </button>
               <button class="btn-sm btn-copy" onclick="copyBill('${bill.id}')" title="Copiar lançamento">
                 Copiar
