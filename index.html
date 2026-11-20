@@ -20,15 +20,19 @@
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
-        <span class="home-username">EDUARDO</span>
+        <span class="home-username">OPÇÕES</span>
       </div>
 
-      <button type="button" class="icon-btn-header" onclick="openRemindersModal()" title="Lembretes e Vencimentos" aria-label="Lembretes">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6v-5c0-3.07-1.63-5.64-4.5-6.32V4a2.5 2.5 0 0 0-5 0v.68C6.64 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z"/>
-        </svg>
-        <span class="bell-badge hidden" id="bellCount">0</span>
-      </button>
+      <div class="home-right">
+        <button type="button" class="icon-btn-header" id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro" aria-label="Alternar tema">🌙</button>
+
+        <button type="button" class="icon-btn-header" onclick="openRemindersModal()" title="Lembretes e Vencimentos" aria-label="Lembretes">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6v-5c0-3.07-1.63-5.64-4.5-6.32V4a2.5 2.5 0 0 0-5 0v.68C6.64 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z"/>
+          </svg>
+          <span class="bell-badge hidden" id="bellCount">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -65,115 +69,129 @@
 <div id="appScreens" class="subpage-wrapper hidden">
   <div class="subpage-topbar">
     <div class="subpage-title-group">
-      <button type="button" class="btn-home-icon" onclick="goHome()" aria-label="Início">
+      <button type="button" class="btn-home-icon" onclick="goHome()" aria-label="Início" title="Voltar ao início">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
       </button>
-      <h1 id="pageTitle">Movimentações</h1>
+      <h1 id="pageTitle" class="hidden"></h1>
       <span id="syncStatus" class="sync-badge offline">Conectando...</span>
-    </div>
-    <div>
-      <button type="button" class="btn-theme" id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">🌙</button>
     </div>
   </div>
 
   <!-- Conteúdo da Tela Unificada: Movimentações -->
   <div id="recordsView">
-    <section class="summary">
-      <div class="summary-item">
-        <span id="card1Label">Créditos (Entradas)</span>
-        <strong id="card1Value" class="text-credit">R$ 0,00</strong>
-        <small id="card1Sub"></small>
-      </div>
-      <div class="summary-item">
-        <span id="card2Label">Débitos (Saídas)</span>
-        <strong id="card2Value" class="text-danger">R$ 0,00</strong>
-        <small id="card2Sub"></small>
-      </div>
-      <div class="summary-item">
-        <span id="card3Label">Saldo do Período</span>
-        <strong id="card3Value" class="text-success">R$ 0,00</strong>
-        <small id="card3Sub"></small>
-      </div>
-    </section>
+    <!-- Painel Congelado no Topo ao Rolar -->
+    <div class="sticky-top-panel">
+      <section class="summary">
+        <div class="summary-item">
+          <span id="card1Label">Créditos (Entradas)</span>
+          <strong id="card1Value" class="text-credit">R$ 0,00</strong>
+          <small id="card1Sub"></small>
+        </div>
+        <div class="summary-item">
+          <span id="card2Label">Débitos (Saídas)</span>
+          <strong id="card2Value" class="text-danger">R$ 0,00</strong>
+          <small id="card2Sub"></small>
+        </div>
+        <div class="summary-item">
+          <span id="card3Label">Saldo do Período</span>
+          <strong id="card3Value" class="text-success">R$ 0,00</strong>
+          <small id="card3Sub"></small>
+        </div>
+      </section>
+    </div>
 
-    <section class="filters-box">
-      <div class="filter-row">
-        <div class="period-pills">
-          <button type="button" class="pill-btn active" id="pillMonth" onclick="setPeriodMode('month')">Mês</button>
-          <button type="button" class="pill-btn" id="pillWeek" onclick="setPeriodMode('week')">Semana</button>
-          <button type="button" class="pill-btn" id="pillToday" onclick="setPeriodMode('today')">Hoje</button>
-          <button type="button" class="pill-btn" id="pillCustom" onclick="setPeriodMode('custom')">Período Livre</button>
+    <!-- Caixa de Filtros Retrátil -->
+    <section class="filters-box collapsed" id="filtersBox">
+      <button type="button" class="filters-toggle-bar" onclick="toggleFiltersPanel()" aria-expanded="false" id="filtersToggleBtn">
+        <span class="filters-toggle-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          <span>Filtros</span>
+          <span id="filtersSummaryBadge" class="filters-summary-badge">Mês atual</span>
+        </span>
+        <span class="filters-chevron" id="filtersChevron">▾</span>
+      </button>
+
+      <div class="filters-collapsible-content" id="filtersContent">
+        <div class="filter-row">
+          <div class="period-pills">
+            <button type="button" class="pill-btn active" id="pillMonth" onclick="setPeriodMode('month')">Mês</button>
+            <button type="button" class="pill-btn" id="pillWeek" onclick="setPeriodMode('week')">Semana</button>
+            <button type="button" class="pill-btn" id="pillToday" onclick="setPeriodMode('today')">Hoje</button>
+            <button type="button" class="pill-btn" id="pillCustom" onclick="setPeriodMode('custom')">Período Livre</button>
+          </div>
+
+          <input type="month" id="monthFilter" onchange="onMonthInputChange()" title="Escolher mês" />
+
+          <div id="customRangeInputs" class="custom-range-inputs hidden">
+            <span>De:</span>
+            <input type="date" id="customStart" onchange="render()" />
+            <span>Até:</span>
+            <input type="date" id="customEnd" onchange="render()" />
+          </div>
+
+          <select id="statusFilter" onchange="render()" title="Filtrar por situação">
+            <option value="all">Todas situações</option>
+            <option value="pending">Pendentes</option>
+            <option value="paid">Pagas / Recebidas</option>
+          </select>
         </div>
 
-        <input type="month" id="monthFilter" onchange="onMonthInputChange()" title="Escolher mês" />
-
-        <div id="customRangeInputs" class="custom-range-inputs hidden">
-          <span>De:</span>
-          <input type="date" id="customStart" onchange="render()" />
-          <span>Até:</span>
-          <input type="date" id="customEnd" onchange="render()" />
-        </div>
-
-        <select id="statusFilter" onchange="render()" title="Filtrar por situação">
-          <option value="all">Todas situações</option>
-          <option value="pending">Pendentes</option>
-          <option value="paid">Pagas / Recebidas</option>
-        </select>
-      </div>
-
-      <div class="filter-row">
-        <div class="multi-dropdown" id="ddDesc">
-          <button type="button" class="multi-trigger" id="triggerDesc" onclick="toggleMultiPanel('panelDesc', event)">
-            Descrições (Todas) ▾
-          </button>
-          <div class="multi-panel" id="panelDesc" onclick="event.stopPropagation()">
-            <input type="text" class="multi-panel-search" id="searchMultiDesc" placeholder="Filtrar descrições..." oninput="filterMultiOptions('listDesc', this.value)" />
-            <div class="multi-options-list" id="listDesc"></div>
-            <div class="multi-panel-footer">
-              <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('desc')">Limpar</button>
-              <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+        <div class="filter-row">
+          <div class="multi-dropdown" id="ddDesc">
+            <button type="button" class="multi-trigger" id="triggerDesc" onclick="toggleMultiPanel('panelDesc', event)">
+              Descrições (Todas) ▾
+            </button>
+            <div class="multi-panel" id="panelDesc" onclick="event.stopPropagation()">
+              <input type="text" class="multi-panel-search" id="searchMultiDesc" placeholder="Filtrar descrições..." oninput="filterMultiOptions('listDesc', this.value)" />
+              <div class="multi-options-list" id="listDesc"></div>
+              <div class="multi-panel-footer">
+                <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('desc')">Limpar</button>
+                <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="multi-dropdown" id="ddType">
-          <button type="button" class="multi-trigger" id="triggerType" onclick="toggleMultiPanel('panelType', event)">
-            Tipos (Todos) ▾
-          </button>
-          <div class="multi-panel" id="panelType" onclick="event.stopPropagation()">
-            <div class="multi-options-list" id="listType"></div>
-            <div class="multi-panel-footer">
-              <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('type')">Limpar</button>
-              <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+          <div class="multi-dropdown" id="ddType">
+            <button type="button" class="multi-trigger" id="triggerType" onclick="toggleMultiPanel('panelType', event)">
+              Tipos (Todos) ▾
+            </button>
+            <div class="multi-panel" id="panelType" onclick="event.stopPropagation()">
+              <div class="multi-options-list" id="listType"></div>
+              <div class="multi-panel-footer">
+                <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('type')">Limpar</button>
+                <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="multi-dropdown" id="ddCat">
-          <button type="button" class="multi-trigger" id="triggerCat" onclick="toggleMultiPanel('panelCat', event)">
-            Categorias (Todas) ▾
-          </button>
-          <div class="multi-panel" id="panelCat" onclick="event.stopPropagation()">
-            <div class="multi-options-list" id="listCat"></div>
-            <div class="multi-panel-footer">
-              <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('cat')">Limpar</button>
-              <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+          <div class="multi-dropdown" id="ddCat">
+            <button type="button" class="multi-trigger" id="triggerCat" onclick="toggleMultiPanel('panelCat', event)">
+              Categorias (Todas) ▾
+            </button>
+            <div class="multi-panel" id="panelCat" onclick="event.stopPropagation()">
+              <div class="multi-options-list" id="listCat"></div>
+              <div class="multi-panel-footer">
+                <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('cat')">Limpar</button>
+                <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+              </div>
             </div>
           </div>
+
+          <input
+            type="text"
+            id="searchFilter"
+            class="search-input"
+            placeholder="Busca livre por texto ou obs..."
+            oninput="render()"
+          />
         </div>
 
-        <input
-          type="text"
-          id="searchFilter"
-          class="search-input"
-          placeholder="Busca livre por texto ou obs..."
-          oninput="render()"
-        />
+        <div id="activeChipsRow" class="active-chips hidden"></div>
       </div>
-
-      <div id="activeChipsRow" class="active-chips hidden"></div>
     </section>
 
     <main class="bill-list" id="billList">
