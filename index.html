@@ -1,12 +1,3 @@
-Achei o motivo exato pelo qual os filtros (de múltipla escolha e de período) pararam de responder no código anterior:
-
-Aspas quebrando o HTML dos checkboxes: Na função renderCheckboxList, eu usei JSON.stringify(val) dentro de um atributo onchange="..." cercado por aspas duplas. Como o JSON.stringify coloca aspas duplas ao redor do texto, o navegador encerra o atributo onchange antes da hora e gera um erro de sintaxe ao clicar nas caixinhas de Descrições, Tipos ou Categorias (e no botão ✕ dos chips).
-
-Seletor de mês não voltando ao filtrar: Se você trocava para Semana ou Hoje e depois clicava direto no campo do Mês sem clicar no botão "Mês", ele continuava preso no modo anterior.
-
-Abaixo está o index.html completo com essas duas correções aplicadas (usando data-value seguro no DOM em vez de texto dentro do onchange e sincronizando automaticamente os botões de período):
-
-HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
