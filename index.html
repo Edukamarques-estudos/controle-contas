@@ -66,188 +66,193 @@
 </div>
 
 <!-- ==================== TELAS INTERNAS (MOVIMENTAÇÕES & ADM) ==================== -->
-<div id="appScreens" class="subpage-wrapper hidden">
-  <div class="subpage-topbar">
-    <div class="subpage-title-group">
-      <button type="button" class="btn-home-icon" onclick="goHome()" aria-label="Início" title="Voltar ao início">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-        </svg>
-      </button>
-      <h1 id="pageTitle" class="hidden"></h1>
-      <span id="syncStatus" class="sync-badge offline">Conectando...</span>
-    </div>
-  </div>
+<div id="appScreens" class="hidden">
 
-  <!-- Conteúdo da Tela Unificada: Movimentações -->
-  <div id="recordsView">
-    <!-- Painel Congelado no Topo ao Rolar -->
-    <div class="sticky-top-panel">
-      <section class="summary">
+  <!-- PAINEL CONGELADO NO TOPO (IGUAL CONGELAR PAINÉIS DO EXCEL) -->
+  <header class="frozen-header" id="frozenHeader">
+    <div class="frozen-header-inner">
+      <div class="frozen-nav-row">
+        <button type="button" class="btn-home-icon" onclick="goHome()" aria-label="Início" title="Voltar ao início">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+        </button>
+        <h1 id="pageTitle" class="hidden"></h1>
+        <span id="syncStatus" class="sync-badge offline">Conectando...</span>
+      </div>
+
+      <!-- Resumo Centralizado (só aparece na tela de Movimentações) -->
+      <section class="summary" id="frozenSummary">
         <div class="summary-item">
           <span id="card1Label">Créditos (Entradas)</span>
           <strong id="card1Value" class="text-credit">R$ 0,00</strong>
-          <small id="card1Sub"></small>
+          <small id="card1Sub">&nbsp;</small>
         </div>
         <div class="summary-item">
           <span id="card2Label">Débitos (Saídas)</span>
           <strong id="card2Value" class="text-danger">R$ 0,00</strong>
-          <small id="card2Sub"></small>
+          <small id="card2Sub">&nbsp;</small>
         </div>
         <div class="summary-item">
           <span id="card3Label">Saldo do Período</span>
           <strong id="card3Value" class="text-success">R$ 0,00</strong>
-          <small id="card3Sub"></small>
+          <small id="card3Sub">&nbsp;</small>
         </div>
       </section>
     </div>
+  </header>
 
-    <!-- Caixa de Filtros Retrátil -->
-    <section class="filters-box collapsed" id="filtersBox">
-      <button type="button" class="filters-toggle-bar" onclick="toggleFiltersPanel()" aria-expanded="false" id="filtersToggleBtn">
-        <span class="filters-toggle-left">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-          <span>Filtros</span>
-          <span id="filtersSummaryBadge" class="filters-summary-badge">Mês atual</span>
-        </span>
-        <span class="filters-chevron" id="filtersChevron">▾</span>
-      </button>
+  <div class="subpage-content" id="subpageContent">
+    <!-- Conteúdo da Tela Unificada: Movimentações -->
+    <div id="recordsView">
 
-      <div class="filters-collapsible-content" id="filtersContent">
-        <div class="filter-row">
-          <div class="period-pills">
-            <button type="button" class="pill-btn active" id="pillMonth" onclick="setPeriodMode('month')">Mês</button>
-            <button type="button" class="pill-btn" id="pillWeek" onclick="setPeriodMode('week')">Semana</button>
-            <button type="button" class="pill-btn" id="pillToday" onclick="setPeriodMode('today')">Hoje</button>
-            <button type="button" class="pill-btn" id="pillCustom" onclick="setPeriodMode('custom')">Período Livre</button>
+      <!-- Caixa de Filtros Expansível / Retrátil (começa recolhida) -->
+      <details class="filters-accordion" id="filtersAccordion">
+        <summary class="filters-accordion-header">
+          <span class="filters-accordion-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>Filtros</span>
+            <span id="filtersSummaryBadge" class="filters-summary-badge">Mês atual</span>
+          </span>
+          <span class="filters-accordion-arrow">▾</span>
+        </summary>
+
+        <div class="filters-accordion-body">
+          <div class="filter-row">
+            <div class="period-pills">
+              <button type="button" class="pill-btn active" id="pillMonth" onclick="setPeriodMode('month')">Mês</button>
+              <button type="button" class="pill-btn" id="pillWeek" onclick="setPeriodMode('week')">Semana</button>
+              <button type="button" class="pill-btn" id="pillToday" onclick="setPeriodMode('today')">Hoje</button>
+              <button type="button" class="pill-btn" id="pillCustom" onclick="setPeriodMode('custom')">Período Livre</button>
+            </div>
+
+            <input type="month" id="monthFilter" onchange="onMonthInputChange()" title="Escolher mês" />
+
+            <div id="customRangeInputs" class="custom-range-inputs hidden">
+              <span>De:</span>
+              <input type="date" id="customStart" onchange="render()" />
+              <span>Até:</span>
+              <input type="date" id="customEnd" onchange="render()" />
+            </div>
+
+            <select id="statusFilter" onchange="render()" title="Filtrar por situação">
+              <option value="all">Todas situações</option>
+              <option value="pending">Pendentes</option>
+              <option value="paid">Pagas / Recebidas</option>
+            </select>
           </div>
 
-          <input type="month" id="monthFilter" onchange="onMonthInputChange()" title="Escolher mês" />
+          <div class="filter-row">
+            <div class="multi-dropdown" id="ddDesc">
+              <button type="button" class="multi-trigger" id="triggerDesc" onclick="toggleMultiPanel('panelDesc', event)">
+                Descrições (Todas) ▾
+              </button>
+              <div class="multi-panel" id="panelDesc" onclick="event.stopPropagation()">
+                <input type="text" class="multi-panel-search" id="searchMultiDesc" placeholder="Filtrar descrições..." oninput="filterMultiOptions('listDesc', this.value)" />
+                <div class="multi-options-list" id="listDesc"></div>
+                <div class="multi-panel-footer">
+                  <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('desc')">Limpar</button>
+                  <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+                </div>
+              </div>
+            </div>
 
-          <div id="customRangeInputs" class="custom-range-inputs hidden">
-            <span>De:</span>
-            <input type="date" id="customStart" onchange="render()" />
-            <span>Até:</span>
-            <input type="date" id="customEnd" onchange="render()" />
+            <div class="multi-dropdown" id="ddType">
+              <button type="button" class="multi-trigger" id="triggerType" onclick="toggleMultiPanel('panelType', event)">
+                Tipos (Todos) ▾
+              </button>
+              <div class="multi-panel" id="panelType" onclick="event.stopPropagation()">
+                <div class="multi-options-list" id="listType"></div>
+                <div class="multi-panel-footer">
+                  <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('type')">Limpar</button>
+                  <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="multi-dropdown" id="ddCat">
+              <button type="button" class="multi-trigger" id="triggerCat" onclick="toggleMultiPanel('panelCat', event)">
+                Categorias (Todas) ▾
+              </button>
+              <div class="multi-panel" id="panelCat" onclick="event.stopPropagation()">
+                <div class="multi-options-list" id="listCat"></div>
+                <div class="multi-panel-footer">
+                  <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('cat')">Limpar</button>
+                  <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
+                </div>
+              </div>
+            </div>
+
+            <input
+              type="text"
+              id="searchFilter"
+              class="search-input"
+              placeholder="Busca livre por texto ou obs..."
+              oninput="render()"
+            />
           </div>
 
-          <select id="statusFilter" onchange="render()" title="Filtrar por situação">
-            <option value="all">Todas situações</option>
-            <option value="pending">Pendentes</option>
-            <option value="paid">Pagas / Recebidas</option>
-          </select>
+          <div id="activeChipsRow" class="active-chips hidden"></div>
+        </div>
+      </details>
+
+      <main class="bill-list" id="billList">
+        <div class="empty-state">Carregando dados da nuvem...</div>
+      </main>
+    </div>
+
+    <!-- ==================== CONTEÚDO DA TELA ADM ==================== -->
+    <section id="admView" class="hidden">
+      <div class="adm-grid">
+        <div class="adm-card">
+          <h2>Tipos de Lançamento (Crédito / Débito)</h2>
+          <p>Cadastre os tipos disponíveis (ex: Ganhos App, Conta Fixa, Combustível) e defina se somam ou subtraem.</p>
+          <div class="adm-inline-form">
+            <input type="text" id="newTypeName" placeholder="Nome do tipo..." />
+            <select id="newTypeNature">
+              <option value="debit">Débito (-)</option>
+              <option value="credit">Crédito (+)</option>
+            </select>
+            <button type="button" class="btn-primary" onclick="addLaunchType()">Adicionar</button>
+          </div>
+          <div class="tag-cloud" id="admTypesList"></div>
         </div>
 
-        <div class="filter-row">
-          <div class="multi-dropdown" id="ddDesc">
-            <button type="button" class="multi-trigger" id="triggerDesc" onclick="toggleMultiPanel('panelDesc', event)">
-              Descrições (Todas) ▾
-            </button>
-            <div class="multi-panel" id="panelDesc" onclick="event.stopPropagation()">
-              <input type="text" class="multi-panel-search" id="searchMultiDesc" placeholder="Filtrar descrições..." oninput="filterMultiOptions('listDesc', this.value)" />
-              <div class="multi-options-list" id="listDesc"></div>
-              <div class="multi-panel-footer">
-                <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('desc')">Limpar</button>
-                <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
-              </div>
-            </div>
+        <div class="adm-card">
+          <h2>Categorias</h2>
+          <p>Cadastre livremente as categorias para organizar seus lançamentos.</p>
+          <div class="adm-inline-form">
+            <input type="text" id="newCategoryName" placeholder="Nome da categoria..." />
+            <button type="button" class="btn-primary" onclick="addCategoryItem()">Adicionar</button>
           </div>
-
-          <div class="multi-dropdown" id="ddType">
-            <button type="button" class="multi-trigger" id="triggerType" onclick="toggleMultiPanel('panelType', event)">
-              Tipos (Todos) ▾
-            </button>
-            <div class="multi-panel" id="panelType" onclick="event.stopPropagation()">
-              <div class="multi-options-list" id="listType"></div>
-              <div class="multi-panel-footer">
-                <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('type')">Limpar</button>
-                <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="multi-dropdown" id="ddCat">
-            <button type="button" class="multi-trigger" id="triggerCat" onclick="toggleMultiPanel('panelCat', event)">
-              Categorias (Todas) ▾
-            </button>
-            <div class="multi-panel" id="panelCat" onclick="event.stopPropagation()">
-              <div class="multi-options-list" id="listCat"></div>
-              <div class="multi-panel-footer">
-                <button type="button" class="btn-outline btn-sm" onclick="clearMultiFilter('cat')">Limpar</button>
-                <button type="button" class="btn-primary btn-sm" onclick="closeAllMultiPanels()">OK</button>
-              </div>
-            </div>
-          </div>
-
-          <input
-            type="text"
-            id="searchFilter"
-            class="search-input"
-            placeholder="Busca livre por texto ou obs..."
-            oninput="render()"
-          />
+          <div class="tag-cloud" id="admCategoriesList"></div>
         </div>
 
-        <div id="activeChipsRow" class="active-chips hidden"></div>
+        <div class="adm-card">
+          <h2>Backup & Exportação (.JSON)</h2>
+          <p>Baixe uma cópia de segurança completa de todos os seus lançamentos unificados (<strong id="countTotalRecords">0</strong> registros).</p>
+          <div class="adm-actions">
+            <button type="button" class="btn-outline" onclick="exportAllData()">
+              Exportar Backup Completo (.JSON)
+            </button>
+          </div>
+        </div>
+
+        <div class="adm-card">
+          <h2>Importar Planilha ou Backup (.CSV / .JSON)</h2>
+          <p>Adicione registros em lote sem apagar os dados que já existem no sistema.</p>
+          <div class="adm-actions">
+            <button type="button" class="btn-primary" onclick="document.getElementById('importFile').click()">
+              Selecionar Arquivo para Importar
+            </button>
+            <input type="file" id="importFile" accept=".json,.csv" style="display:none" onchange="importData(event)" />
+          </div>
+        </div>
       </div>
     </section>
-
-    <main class="bill-list" id="billList">
-      <div class="empty-state">Carregando dados da nuvem...</div>
-    </main>
   </div>
-
-  <!-- ==================== CONTEÚDO DA TELA ADM ==================== -->
-  <section id="admView" class="hidden">
-    <div class="adm-grid">
-      <div class="adm-card">
-        <h2>Tipos de Lançamento (Crédito / Débito)</h2>
-        <p>Cadastre os tipos disponíveis (ex: Ganhos App, Conta Fixa, Combustível) e defina se somam ou subtraem.</p>
-        <div class="adm-inline-form">
-          <input type="text" id="newTypeName" placeholder="Nome do tipo..." />
-          <select id="newTypeNature">
-            <option value="debit">Débito (-)</option>
-            <option value="credit">Crédito (+)</option>
-          </select>
-          <button type="button" class="btn-primary" onclick="addLaunchType()">Adicionar</button>
-        </div>
-        <div class="tag-cloud" id="admTypesList"></div>
-      </div>
-
-      <div class="adm-card">
-        <h2>Categorias</h2>
-        <p>Cadastre livremente as categorias para organizar seus lançamentos.</p>
-        <div class="adm-inline-form">
-          <input type="text" id="newCategoryName" placeholder="Nome da categoria..." />
-          <button type="button" class="btn-primary" onclick="addCategoryItem()">Adicionar</button>
-        </div>
-        <div class="tag-cloud" id="admCategoriesList"></div>
-      </div>
-
-      <div class="adm-card">
-        <h2>Backup & Exportação (.JSON)</h2>
-        <p>Baixe uma cópia de segurança completa de todos os seus lançamentos unificados (<strong id="countTotalRecords">0</strong> registros).</p>
-        <div class="adm-actions">
-          <button type="button" class="btn-outline" onclick="exportAllData()">
-            Exportar Backup Completo (.JSON)
-          </button>
-        </div>
-      </div>
-
-      <div class="adm-card">
-        <h2>Importar Planilha ou Backup (.CSV / .JSON)</h2>
-        <p>Adicione registros em lote sem apagar os dados que já existem no sistema.</p>
-        <div class="adm-actions">
-          <button type="button" class="btn-primary" onclick="document.getElementById('importFile').click()">
-            Selecionar Arquivo para Importar
-          </button>
-          <input type="file" id="importFile" accept=".json,.csv" style="display:none" onchange="importData(event)" />
-        </div>
-      </div>
-    </div>
-  </section>
 </div>
 
 <button type="button" class="fab-add hidden" id="btnNewItem" onclick="openNewModal()" title="Novo lançamento">+</button>
