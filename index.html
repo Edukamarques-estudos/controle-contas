@@ -1,3 +1,12 @@
+Achei o motivo exato pelo qual os filtros (de múltipla escolha e de período) pararam de responder no código anterior:
+
+Aspas quebrando o HTML dos checkboxes: Na função renderCheckboxList, eu usei JSON.stringify(val) dentro de um atributo onchange="..." cercado por aspas duplas. Como o JSON.stringify coloca aspas duplas ao redor do texto, o navegador encerra o atributo onchange antes da hora e gera um erro de sintaxe ao clicar nas caixinhas de Descrições, Tipos ou Categorias (e no botão ✕ dos chips).
+
+Seletor de mês não voltando ao filtrar: Se você trocava para Semana ou Hoje e depois clicava direto no campo do Mês sem clicar no botão "Mês", ele continuava preso no modo anterior.
+
+Abaixo está o index.html completo com essas duas correções aplicadas (usando data-value seguro no DOM em vez de texto dentro do onchange e sincronizando automaticamente os botões de período):
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1219,7 +1228,7 @@
           <button type="button" class="pill-btn" id="pillCustom" onclick="setPeriodMode('custom')">Período Livre</button>
         </div>
 
-        <input type="month" id="monthFilter" onchange="render()" title="Escolher mês" />
+        <input type="month" id="monthFilter" onchange="onMonthInputChange()" title="Escolher mês" />
 
         <div id="customRangeInputs" class="custom-range-inputs hidden">
           <span>De:</span>
@@ -1533,7 +1542,7 @@
   const app = initializeApp({ databaseURL: FIREBASE_DATABASE_URL });
   const db = getDatabase(app);
 
-  // Referências no Firebase: base unificada + bases antigas (para manter todo seu histórico) + configurações ADM
+  // Referências no Firebase
   const refs = {
     lancamentos: ref(db, 'lancamentos'),
     contasLegacy: ref(db, 'contas'),
@@ -1709,14 +1718,14 @@
     syncStatusHome.textContent = "Offline";
   });
 
-  // Escuta registros antigos de contas (para manter seu histórico)
+  // Escuta registros antigos de contas
   onValue(refs.contasLegacy, (snapshot) => {
     const data = snapshot.val();
     rawBuckets.contasLegacy = data ? Object.values(data) : [];
     onDataUpdated();
   });
 
-  // Escuta registros antigos de carro (para manter seu histórico)
+  // Escuta registros antigos de carro
   onValue(refs.carroLegacy, (snapshot) => {
     const data = snapshot.val();
     rawBuckets.carroLegacy = data ? Object.values(data) : [];
@@ -1819,6 +1828,14 @@
     render();
   };
 
+  window.onMonthInputChange = function() {
+    if (periodMode !== 'month') {
+      setPeriodMode('month');
+    } else {
+      render();
+    }
+  };
+
   function refreshMultiFilterOptions() {
     const all = getAllRecords();
 
@@ -1826,7 +1843,7 @@
     const uniqueDescs = [...new Set(all.map(r => (r.desc || '').trim()).filter(Boolean))]
       .sort((a, b) => a.localeCompare(b, 'pt-BR'));
 
-    // Tipos únicos (configurados + presentes nos lançamentos)
+    // Tipos únicos
     const uniqueTypes = [...new Set([
       ...customTypes.map(t => t.name),
       ...all.map(r => r.launchType).filter(Boolean)
@@ -1851,20 +1868,32 @@
 
   function renderCheckboxList(containerId, items, selectedSet, filterKey) {
     const el = document.getElementById(containerId);
+    el.innerHTML = '';
+
     if (!items.length) {
       el.innerHTML = `<div style="font-size:0.78rem; color:var(--muted); padding:6px;">Nenhuma opção</div>`;
       return;
     }
 
-    el.innerHTML = items.map(val => {
-      const checked = selectedSet.has(val) ? 'checked' : '';
-      return `
-        <label class="multi-option-item" data-label="${normalizeText(val)}">
-          <input type="checkbox" ${checked} onchange="toggleMultiValue('${filterKey}', ${JSON.stringify(val)}, this.checked)" />
-          <span>${escapeHTML(val)}</span>
-        </label>
-      `;
-    }).join('');
+    items.forEach(val => {
+      const label = document.createElement('label');
+      label.className = 'multi-option-item';
+      label.setAttribute('data-label', normalizeText(val));
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = selectedSet.has(val);
+      checkbox.addEventListener('change', () => {
+        toggleMultiValue(filterKey, val, checkbox.checked);
+      });
+
+      const span = document.createElement('span');
+      span.textContent = val;
+
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      el.appendChild(label);
+    });
   }
 
   window.filterMultiOptions = function(listId, query) {
@@ -1886,9 +1915,15 @@
   };
 
   window.clearMultiFilter = function(filterKey) {
-    if (filterKey === 'desc') selectedDescs.clear();
-    else if (filterKey === 'type') selectedTypes.clear();
-    else selectedCats.clear();
+    if (filterKey === 'desc') {
+      selectedDescs.clear();
+      const sInput = document.getElementById('searchMultiDesc');
+      if (sInput) sInput.value = '';
+    } else if (filterKey === 'type') {
+      selectedTypes.clear();
+    } else {
+      selectedCats.clear();
+    }
 
     refreshMultiFilterOptions();
     render();
@@ -1908,33 +1943,50 @@
     tCat.textContent = selectedCats.size > 0 ? `Categorias (${selectedCats.size}) ▾` : 'Categorias (Todas) ▾';
     tCat.classList.toggle('has-selection', selectedCats.size > 0);
 
-    // Chips ativos abaixo da barra
+    // Chips ativos abaixo da barra (construídos via DOM para suportar qualquer texto)
     const chipsRow = document.getElementById('activeChipsRow');
-    const chips = [];
+    chipsRow.innerHTML = '';
 
-    selectedDescs.forEach(v => chips.push(`<span class="filter-chip">Desc: ${escapeHTML(v)} <button type="button" onclick="removeSingleChip('desc', ${JSON.stringify(v)})">✕</button></span>`));
-    selectedTypes.forEach(v => chips.push(`<span class="filter-chip">Tipo: ${escapeHTML(v)} <button type="button" onclick="removeSingleChip('type', ${JSON.stringify(v)})">✕</button></span>`));
-    selectedCats.forEach(v => chips.push(`<span class="filter-chip">Cat: ${escapeHTML(v)} <button type="button" onclick="removeSingleChip('cat', ${JSON.stringify(v)})">✕</button></span>`));
+    const createChip = (prefix, val, key) => {
+      const chip = document.createElement('span');
+      chip.className = 'filter-chip';
+      chip.textContent = `${prefix}: ${val} `;
 
-    if (chips.length > 0) {
-      chips.push(`<button type="button" class="btn-outline btn-sm" onclick="clearAllMultiFilters()">Limpar filtros</button>`);
-      chipsRow.innerHTML = chips.join('');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = '✕';
+      btn.addEventListener('click', () => {
+        toggleMultiValue(key, val, false);
+        refreshMultiFilterOptions();
+      });
+
+      chip.appendChild(btn);
+      chipsRow.appendChild(chip);
+    };
+
+    selectedDescs.forEach(v => createChip('Desc', v, 'desc'));
+    selectedTypes.forEach(v => createChip('Tipo', v, 'type'));
+    selectedCats.forEach(v => createChip('Cat', v, 'cat'));
+
+    if (chipsRow.children.length > 0) {
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'btn-outline btn-sm';
+      clearBtn.textContent = 'Limpar filtros';
+      clearBtn.addEventListener('click', clearAllMultiFilters);
+      chipsRow.appendChild(clearBtn);
       chipsRow.classList.remove('hidden');
     } else {
-      chipsRow.innerHTML = '';
       chipsRow.classList.add('hidden');
     }
   }
-
-  window.removeSingleChip = function(filterKey, val) {
-    toggleMultiValue(filterKey, val, false);
-    refreshMultiFilterOptions();
-  };
 
   window.clearAllMultiFilters = function() {
     selectedDescs.clear();
     selectedTypes.clear();
     selectedCats.clear();
+    const sInput = document.getElementById('searchMultiDesc');
+    if (sInput) sInput.value = '';
     refreshMultiFilterOptions();
     render();
   };
