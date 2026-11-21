@@ -71,6 +71,7 @@ let customCategories = [...DEFAULT_CATEGORIES];
 let currentPage = 'home';
 let periodMode = 'month';
 let lastPaidBill = null;
+let filtersExpanded = false;
 
 // Conjuntos de filtros múltiplos selecionados
 let selectedDescs = new Set();
@@ -214,6 +215,37 @@ onValue(refs.carroLegacy, (snapshot) => {
   onDataUpdated();
 });
 
+// ================= EXPANDIR / RECOLHER FILTROS =================
+window.toggleFiltersBox = function() {
+  filtersExpanded = !filtersExpanded;
+  const body = document.getElementById('filtersCollapsibleBody');
+  const arrow = document.getElementById('filtersToggleArrow');
+  body.classList.toggle('hidden', !filtersExpanded);
+  arrow.textContent = filtersExpanded ? '▴' : '▾';
+  updateFiltersToggleSummary();
+};
+
+function updateFiltersToggleSummary() {
+  const label = document.getElementById('filtersToggleLabel');
+  if (!label) return;
+
+  const statusVal = document.getElementById('statusFilter').value;
+  const searchVal = document.getElementById('searchFilter').value.trim();
+  const activeCount =
+    selectedDescs.size +
+    selectedTypes.size +
+    selectedCats.size +
+    (statusVal !== 'all' ? 1 : 0) +
+    (searchVal ? 1 : 0) +
+    (periodMode !== 'month' ? 1 : 0);
+
+  if (activeCount > 0) {
+    label.textContent = `🔍 Filtros (${activeCount} ativo${activeCount > 1 ? 's' : ''})`;
+  } else {
+    label.textContent = '🔍 Filtros (Período, Descrição, Tipo...)';
+  }
+}
+
 // ================= ADM: CADASTRO DE TIPOS E CATEGORIAS =================
 function renderAdmConfig() {
   const typesContainer = document.getElementById('admTypesList');
@@ -285,37 +317,6 @@ window.removeCategoryItem = async function(index) {
   await set(refs.configCategories, updated);
 };
 
-// ================= RESUMO DOS FILTROS NO CABEÇALHO RETRÁTIL =================
-function updateFiltersSummaryBadge() {
-  const badge = document.getElementById('filtersSummaryBadge');
-  if (!badge) return;
-
-  const parts = [];
-  if (periodMode === 'today') parts.push('Hoje');
-  else if (periodMode === 'week') parts.push('Semana');
-  else if (periodMode === 'custom') parts.push('Período livre');
-  else if (monthFilter.value) {
-    const [y, m] = monthFilter.value.split('-');
-    parts.push(`${m}/${y}`);
-  }
-
-  const statusVal = document.getElementById('statusFilter').value;
-  if (statusVal === 'pending') parts.push('Pendentes');
-  else if (statusVal === 'paid') parts.push('Pagas/Recebidas');
-
-  const extraCount =
-    selectedDescs.size +
-    selectedTypes.size +
-    selectedCats.size +
-    (document.getElementById('searchFilter').value.trim() ? 1 : 0);
-
-  if (extraCount > 0) {
-    parts.push(`+${extraCount} filtro(s)`);
-  }
-
-  badge.textContent = parts.join(' • ');
-}
-
 // ================= FILTROS MULTIPLOS E PERÍODOS =================
 window.setPeriodMode = function(mode) {
   periodMode = mode;
@@ -338,6 +339,7 @@ window.setPeriodMode = function(mode) {
     }
   }
 
+  updateFiltersToggleSummary();
   render();
 };
 
@@ -420,6 +422,7 @@ window.toggleMultiValue = function(filterKey, val, isChecked) {
   else targetSet.delete(val);
 
   updateMultiTriggersUI();
+  updateFiltersToggleSummary();
   render();
 };
 
@@ -435,6 +438,7 @@ window.clearMultiFilter = function(filterKey) {
   }
 
   refreshMultiFilterOptions();
+  updateFiltersToggleSummary();
   render();
 };
 
@@ -496,6 +500,7 @@ window.clearAllMultiFilters = function() {
   const sInput = document.getElementById('searchMultiDesc');
   if (sInput) sInput.value = '';
   refreshMultiFilterOptions();
+  updateFiltersToggleSummary();
   render();
 };
 
@@ -557,9 +562,6 @@ window.switchPage = function(page) {
 
   const isAdm = page === 'adm';
   const titleEl = document.getElementById('pageTitle');
-  const frozenSummary = document.getElementById('frozenSummary');
-  const subpageContent = document.getElementById('subpageContent');
-
   document.getElementById('recordsView').classList.toggle('hidden', isAdm);
   document.getElementById('admView').classList.toggle('hidden', !isAdm);
   document.getElementById('btnNewItem').classList.toggle('hidden', isAdm);
@@ -567,16 +569,13 @@ window.switchPage = function(page) {
   if (isAdm) {
     titleEl.textContent = 'ADM';
     titleEl.classList.remove('hidden');
-    frozenSummary.classList.add('hidden');
-    subpageContent.classList.add('adm-mode');
     renderAdmConfig();
     return;
   }
 
+  // Sem título na tela de movimentações (apenas ícone de Home)
   titleEl.textContent = '';
   titleEl.classList.add('hidden');
-  frozenSummary.classList.remove('hidden');
-  subpageContent.classList.remove('adm-mode');
   render();
 };
 
@@ -966,7 +965,7 @@ function addOneMonth(dateStr) {
 window.render = function() {
   if (currentPage !== 'financeiro') return;
 
-  updateFiltersSummaryBadge();
+  updateFiltersToggleSummary();
 
   const selectedMonth = monthFilter.value;
   const statusFilter = document.getElementById('statusFilter').value;
@@ -1022,7 +1021,7 @@ window.render = function() {
   const netBalance = totalCredits - totalDebits;
 
   document.getElementById('card1Value').textContent = formatCurrency(totalCredits);
-  document.getElementById('card1Sub').textContent = credits.length ? `${credits.length} entrada(s)` : '\u00A0';
+  document.getElementById('card1Sub').textContent = credits.length ? `${credits.length} entrada(s)` : '';
 
   document.getElementById('card2Value').textContent = formatCurrency(totalDebits);
   document.getElementById('card2Sub').textContent = pendingDebits > 0 ? `A pagar: ${formatCurrency(pendingDebits)}` : 'Tudo pago';
@@ -1149,7 +1148,8 @@ window.importData = function(event) {
           });
         }
       } else {
-        const lines = content.split(/\r?\n/).filter(l => l.trim() !== '');
+        const lines = content.split(/?
+/).filter(l => l.trim() !== '');
         if (lines.length < 2) throw new Error('Planilha vazia');
 
         const separator = lines[0].includes(';') ? ';' : ',';
