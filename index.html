@@ -2292,16 +2292,17 @@
   }
 
   function drawRoundedRect(ctx, x, y, width, height, radius) {
+    const r = Math.max(0, Math.min(radius, width / 2, height / 2));
     ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + width - r, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+    ctx.lineTo(x + width, y + height - r);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    ctx.lineTo(x + r, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
     ctx.closePath();
   }
 
@@ -2373,7 +2374,9 @@
     ctx.restore();
 
     // Selo grande e bem evidente: PAGO / RECEBIDO
-    const stampW = 148;
+    ctx.font = '900 19px "Segoe UI", system-ui, sans-serif';
+    const stampText = `✓  ${statusLabel}`;
+    const stampW = Math.ceil(ctx.measureText(stampText).width) + 36;
     const stampH = 44;
     const stampX = cardX + 22;
     const stampY = cardY + 94;
