@@ -2037,16 +2037,18 @@
     if (currentPage === 'financeiro') render();
   });
 
-  // Escuta configurações de Categorias na ADM
+  // Escuta configurações de Categorias na ADM (sempre em ordem alfabética)
   onValue(refs.configCategories, (snapshot) => {
     const val = snapshot.val();
+    let loaded = [];
     if (val && Array.isArray(val) && val.length > 0) {
-      customCategories = val;
+      loaded = val;
     } else if (val && typeof val === 'object') {
-      customCategories = Object.values(val);
+      loaded = Object.values(val);
     } else {
-      customCategories = [...DEFAULT_CATEGORIES];
+      loaded = [...DEFAULT_CATEGORIES];
     }
+    customCategories = [...loaded].sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
     renderAdmConfig();
     refreshMultiFilterOptions();
   });
@@ -2092,10 +2094,12 @@
       </span>
     `).join('');
 
-    catsContainer.innerHTML = customCategories.map((c, idx) => `
+    const sortedCategories = [...customCategories].sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
+    catsContainer.innerHTML = sortedCategories.map((c) => `
       <span class="config-tag">
         ${escapeHTML(c)}
-        <button type="button" onclick="removeCategoryItem(${idx})" title="Remover categoria">✕</button>
+        <button type="button" onclick="editCategoryItem('${escapeHTML(c).replace(/'/g, "\'")}')" title="Editar categoria" aria-label="Editar categoria">✏️</button>
+        <button type="button" onclick="removeCategoryItem('${escapeHTML(c).replace(/'/g, "\'")}')" title="Remover categoria" aria-label="Remover categoria">✕</button>
       </span>
     `).join('');
   }
@@ -2136,18 +2140,53 @@
       return;
     }
 
-    const updated = [...customCategories, name];
+    const updated = [...customCategories, name].sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
     await set(refs.configCategories, updated);
     input.value = '';
   };
 
-  window.removeCategoryItem = async function(index) {
+  window.editCategoryItem = async function(oldName) {
+    const newNameRaw = prompt('Editar nome da categoria:', oldName);
+    if (newNameRaw === null) return;
+    const newName = newNameRaw.trim();
+    if (!newName || newName === oldName) return;
+
+    if (customCategories.some(c => c.toLowerCase() === newName.toLowerCase() && c !== oldName)) {
+      alert('Já existe outra categoria com esse nome.');
+      return;
+    }
+
+    const updatedCats = customCategories
+      .map(c => (c === oldName ? newName : c))
+      .sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
+
+    await set(refs.configCategories, updatedCats);
+
+    // Atualiza também os lançamentos existentes que usavam o nome antigo da categoria
+    const all = getAllRecords();
+    const batchUpdates = {};
+    let hasUpdates = false;
+    all.forEach(item => {
+      if (item.category === oldName && item.id) {
+        const path = item._source || 'lancamentos';
+        batchUpdates[`${path}/${item.id}/category`] = newName;
+        hasUpdates = true;
+      }
+    });
+    if (hasUpdates) {
+      await update(ref(db), batchUpdates);
+    }
+  };
+
+  window.removeCategoryItem = async function(catName) {
     if (customCategories.length <= 1) {
       alert('Mantenha pelo menos 1 categoria cadastrada.');
       return;
     }
-    if (!confirm(`Remover a categoria "${customCategories[index]}"?`)) return;
-    const updated = customCategories.filter((_, i) => i !== index);
+    if (!confirm(`Remover a categoria "${catName}"?`)) return;
+    const updated = customCategories
+      .filter(c => c !== catName)
+      .sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
     await set(refs.configCategories, updated);
   };
 
