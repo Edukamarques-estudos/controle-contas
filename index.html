@@ -27,6 +27,8 @@
       --primary-text: #3d5a7c;
       --success: #4a8b71;
       --success-bg: #e1f3eb;
+      --whatsapp: #1f8f4e;
+      --whatsapp-bg: #dcf8e6;
       --warning: #a67c37;
       --warning-bg: #fcf1d8;
       --warning-border: #f2dfb3;
@@ -65,6 +67,8 @@
       --primary-text: #a5c7ed;
       --success: #6ec49e;
       --success-bg: #1d362d;
+      --whatsapp: #4ade80;
+      --whatsapp-bg: #163324;
       --warning: #e5b567;
       --warning-bg: #382e1e;
       --warning-border: #4d3f28;
@@ -365,7 +369,7 @@
       border-color: var(--primary);
     }
 
-    /* ================= PAINEL SUPERIOR CONGELADO (FIXED NO TOPO) ================= */
+    /* ================= PAINEL SUPERIOR CONGELADO (RESULTADOS + FILTROS FIXOS) ================= */
     .frozen-header {
       position: fixed;
       top: 0;
@@ -375,7 +379,7 @@
       background: var(--bg);
       border-bottom: 1px solid var(--border);
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-      padding: 10px 16px 12px 16px;
+      padding: 10px 16px 10px 16px;
     }
 
     body.dark .frozen-header {
@@ -387,7 +391,7 @@
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
     }
 
     .frozen-nav-row {
@@ -447,7 +451,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 9px 8px;
+      padding: 8px 8px;
       box-shadow: var(--shadow);
     }
 
@@ -492,11 +496,11 @@
     .text-success { color: var(--success); }
     .text-credit { color: var(--gain); }
 
-    /* Espaçamento do conteúdo abaixo do painel congelado */
+    /* Espaçamento dinâmico abaixo do painel congelado (Resultados + Filtros) */
     .subpage-content {
       max-width: 960px;
       margin: 0 auto;
-      padding: 152px 18px 88px 18px;
+      padding: 198px 18px 88px 18px;
     }
 
     .subpage-content.adm-mode {
@@ -558,6 +562,14 @@
     .btn-pay { background: var(--success-bg); color: var(--success); }
     .btn-edit { background: var(--edit-bg); color: var(--edit); }
     .btn-copy { background: var(--primary-soft); color: var(--primary-text); }
+    .btn-whats {
+      background: var(--whatsapp-bg);
+      color: var(--whatsapp);
+      border: 1px solid rgba(31, 143, 78, 0.25);
+    }
+    .btn-whats:hover {
+      filter: brightness(0.96);
+    }
 
     /* Botão Excluir (X) no canto superior direito do card */
     .btn-del-corner {
@@ -575,12 +587,12 @@
     }
     .btn-del-corner:hover { opacity: 1; }
 
-    /* ================= FILTROS EXPANSÍVEIS / RETRÁTEIS (ACCORDION) ================= */
+    /* ================= FILTROS EXPANSÍVEIS / RETRÁTEIS DENTRO DO PAINEL CONGELADO ================= */
     .filters-accordion {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 0;
       box-shadow: var(--shadow);
       overflow: visible;
     }
@@ -588,11 +600,11 @@
     .filters-accordion-header {
       list-style: none;
       cursor: pointer;
-      padding: 11px 14px;
+      padding: 9px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--text);
       user-select: none;
@@ -639,6 +651,8 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      max-height: 55vh;
+      overflow-y: auto;
     }
 
     .filter-row {
@@ -716,9 +730,9 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
       padding: 10px;
-      z-index: 50;
+      z-index: 65;
       display: none;
       flex-direction: column;
       gap: 8px;
@@ -735,7 +749,7 @@
     }
 
     .multi-options-list {
-      max-height: 210px;
+      max-height: 200px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -859,7 +873,7 @@
     }
 
     .bill-item.paid {
-      opacity: 0.84;
+      opacity: 0.9;
     }
 
     .bill-info {
@@ -1174,6 +1188,22 @@
       text-transform: uppercase;
     }
 
+    /* Preview do Comprovante no Modal (caso desktop) */
+    .receipt-preview-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .receipt-preview-box img {
+      max-width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+    }
+
     .hidden { display: none !important; }
 
     /* Estilos específicos de impressão */
@@ -1261,7 +1291,7 @@
 <!-- ==================== TELAS INTERNAS (MOVIMENTAÇÕES & ADM) ==================== -->
 <div id="appScreens" class="hidden">
 
-  <!-- PAINEL CONGELADO NO TOPO (IGUAL CONGELAR PAINÉIS DO EXCEL) -->
+  <!-- PAINEL CONGELADO NO TOPO (RESULTADOS + FILTROS FIXOS AO ROLAR) -->
   <header class="frozen-header" id="frozenHeader">
     <div class="frozen-header-inner">
       <div class="frozen-nav-row">
@@ -1292,15 +1322,9 @@
           <small id="card3Sub">&nbsp;</small>
         </div>
       </section>
-    </div>
-  </header>
 
-  <div class="subpage-content" id="subpageContent">
-    <!-- Conteúdo da Tela Unificada: Movimentações -->
-    <div id="recordsView">
-
-      <!-- Caixa de Filtros Expansível / Retrátil (começa recolhida) -->
-      <details class="filters-accordion" id="filtersAccordion">
+      <!-- Caixa de Filtros Expansível / Retrátil CONGELADA junto com os resultados -->
+      <details class="filters-accordion" id="filtersAccordion" ontoggle="adjustFrozenPadding()">
         <summary class="filters-accordion-header">
           <span class="filters-accordion-title">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1390,7 +1414,12 @@
           <div id="activeChipsRow" class="active-chips hidden"></div>
         </div>
       </details>
+    </div>
+  </header>
 
+  <div class="subpage-content" id="subpageContent">
+    <!-- Conteúdo da Tela Unificada: Movimentações -->
+    <div id="recordsView">
       <main class="bill-list" id="billList">
         <div class="empty-state">Carregando dados da nuvem...</div>
       </main>
@@ -1470,6 +1499,19 @@
       🌓 Alternar Tema Claro / Escuro
     </button>
   </aside>
+</div>
+
+<!-- ==================== MODAL: COMPROVANTE WHATSAPP (PREVIEW / DOWNLOAD) ==================== -->
+<div class="modal-backdrop" id="receiptModal">
+  <div class="modal">
+    <h2>Comprovante Pronto</h2>
+    <p class="subtitle" id="receiptSubtitle">Imagem gerada em formato vertical otimizado para celular.</p>
+    <div class="receipt-preview-box" id="receiptPreviewBox"></div>
+    <div class="modal-footer">
+      <button type="button" class="btn-outline" onclick="closeModal('receiptModal')">Fechar</button>
+      <a id="receiptDownloadLink" class="btn-primary" style="text-decoration:none; padding:9px 14px; border-radius:10px; font-size:0.88rem; font-weight:600;" download="comprovante.png">⬇️ Baixar Imagem</a>
+    </div>
+  </div>
 </div>
 
 <!-- ==================== MODAL: RELATÓRIOS PERIÓDICOS ==================== -->
@@ -1601,6 +1643,23 @@
   import { getDatabase, ref, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
   const FIREBASE_DATABASE_URL = "https://controle-contas-6fa7e-default-rtdb.firebaseio.com";
+
+  // Ajuste dinâmico do espaçamento abaixo do cabeçalho congelado (Resultados + Filtros)
+  window.adjustFrozenPadding = function() {
+    requestAnimationFrame(() => {
+      const headerEl = document.getElementById('frozenHeader');
+      const contentEl = document.getElementById('subpageContent');
+      if (!headerEl || !contentEl || currentPage === 'home') return;
+      const h = headerEl.offsetHeight;
+      if (h > 0) {
+        contentEl.style.paddingTop = `${h + 14}px`;
+      }
+    });
+  };
+
+  window.addEventListener('resize', () => {
+    if (currentPage !== 'home') adjustFrozenPadding();
+  });
 
   // Controle do Tema (Claro / Escuro)
   const themeToggleBtn = document.getElementById('themeToggle');
@@ -1938,6 +1997,7 @@
     }
 
     render();
+    adjustFrozenPadding();
   };
 
   window.onMonthInputChange = function() {
@@ -2020,6 +2080,7 @@
 
     updateMultiTriggersUI();
     render();
+    adjustFrozenPadding();
   };
 
   window.clearMultiFilter = function(filterKey) {
@@ -2035,6 +2096,7 @@
 
     refreshMultiFilterOptions();
     render();
+    adjustFrozenPadding();
   };
 
   function updateMultiTriggersUI() {
@@ -2096,6 +2158,7 @@
     if (sInput) sInput.value = '';
     refreshMultiFilterOptions();
     render();
+    adjustFrozenPadding();
   };
 
   window.toggleMultiPanel = function(panelId, event) {
@@ -2113,6 +2176,237 @@
   document.addEventListener('click', () => {
     closeAllMultiPanels();
   });
+
+  // ================= COMPROVANTE PARA WHATSAPP (GERAÇÃO DE IMAGEM VERTICAL MOBILE) =================
+  function wrapCanvasText(ctx, text, maxWidth) {
+    const words = String(text || '').split(/\s+/);
+    const lines = [];
+    let currentLine = '';
+
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      if (ctx.measureText(testLine).width <= maxWidth) {
+        currentLine = testLine;
+      } else {
+        if (currentLine) lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines;
+  }
+
+  function drawRoundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+
+  function buildReceiptCanvas(bill) {
+    const scale = 2; // Alta nitidez para tela de celular
+    const width = 420;
+    const isCredit = bill.nature === 'credit';
+    const statusLabel = isCredit ? 'RECEBIDO' : 'PAGO';
+
+    // Medir altura necessária conforme descrição e observações
+    const tempCanvas = document.createElement('canvas');
+    const tCtx = tempCanvas.getContext('2d');
+    tCtx.font = '700 22px "Segoe UI", system-ui, sans-serif';
+    const descLines = wrapCanvasText(tCtx, bill.desc || 'Lançamento', width - 84);
+
+    tCtx.font = '500 14px "Segoe UI", system-ui, sans-serif';
+    const notesLines = bill.notes ? wrapCanvasText(tCtx, bill.notes, width - 104) : [];
+
+    const descHeight = descLines.length * 28;
+    const notesBoxHeight = notesLines.length > 0 ? (notesLines.length * 20 + 28) : 0;
+    const height = 390 + descHeight + notesBoxHeight;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    // Fundo externo suave
+    ctx.fillStyle = '#f2f4f7';
+    ctx.fillRect(0, 0, width, height);
+
+    // Cartão principal do comprovante
+    const cardX = 16;
+    const cardY = 16;
+    const cardW = width - 32;
+    const cardH = height - 32;
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(20, 35, 55, 0.10)';
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetY = 6;
+    drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 22);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.restore();
+
+    drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 22);
+    ctx.strokeStyle = isCredit ? '#cde3f7' : '#e2ece7';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Faixa superior de destaque (Verde Comprovante)
+    ctx.save();
+    drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 22);
+    ctx.clip();
+    ctx.fillStyle = isCredit ? '#2563eb' : '#15803d';
+    ctx.fillRect(cardX, cardY, cardW, 74);
+
+    // Título no topo da faixa
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 15px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText('COMPROVANTE DE PAGAMENTO', cardX + 22, cardY + 34);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+    ctx.font = '500 12px "Segoe UI", system-ui, sans-serif';
+    const paidDateText = bill.paidAt ? `Quitado em ${formatDatePlain(bill.paidAt)}` : 'Registro quitado';
+    ctx.fillText(paidDateText, cardX + 22, cardY + 54);
+    ctx.restore();
+
+    // Selo grande e bem evidente: PAGO / RECEBIDO
+    const stampW = 148;
+    const stampH = 44;
+    const stampX = cardX + 22;
+    const stampY = cardY + 94;
+
+    drawRoundedRect(ctx, stampX, stampY, stampW, stampH, 12);
+    ctx.fillStyle = isCredit ? '#dbeafe' : '#dcfce7';
+    ctx.fill();
+    ctx.strokeStyle = isCredit ? '#2563eb' : '#16a34a';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Ícone de check + texto PAGO
+    ctx.fillStyle = isCredit ? '#1d4ed8' : '#15803d';
+    ctx.font = '900 19px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(`✓  ${statusLabel}`, stampX + 18, stampY + 29);
+
+    // Tag do Tipo (ex: CONTA A PAGAR)
+    const typeText = String(bill.launchType || 'CONTA A PAGAR').toUpperCase();
+    ctx.font = '700 11px "Segoe UI", system-ui, sans-serif';
+    const typePillW = Math.min(ctx.measureText(typeText).width + 24, cardW - 44);
+    const typePillY = stampY + stampH + 18;
+
+    drawRoundedRect(ctx, cardX + 22, typePillY, typePillW, 25, 99);
+    ctx.fillStyle = isCredit ? '#e0f2fe' : '#fee2e2';
+    ctx.fill();
+    ctx.fillStyle = isCredit ? '#0369a1' : '#b91c1c';
+    ctx.fillText(typeText, cardX + 34, typePillY + 16);
+
+    // Descrição da conta
+    let cursorY = typePillY + 52;
+    ctx.fillStyle = '#1e293b';
+    ctx.font = '700 22px "Segoe UI", system-ui, sans-serif';
+    descLines.forEach(line => {
+      ctx.fillText(line, cardX + 22, cursorY);
+      cursorY += 28;
+    });
+
+    // Data e Categoria
+    cursorY += 4;
+    ctx.fillStyle = '#64748b';
+    ctx.font = '600 14px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(`Data: ${formatDatePlain(bill.dueDate)}`, cardX + 22, cursorY);
+    cursorY += 22;
+    ctx.fillText(`Categoria: ${bill.category || 'Outros'}`, cardX + 22, cursorY);
+    cursorY += 18;
+
+    // Observações (se houver)
+    if (notesLines.length > 0) {
+      drawRoundedRect(ctx, cardX + 22, cursorY, cardW - 44, notesBoxHeight - 8, 10);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fill();
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(cardX + 22, cursorY, 4, notesBoxHeight - 8);
+
+      ctx.fillStyle = '#475569';
+      ctx.font = '500 13.5px "Segoe UI", system-ui, sans-serif';
+      let noteY = cursorY + 21;
+      notesLines.forEach(nLine => {
+        ctx.fillText(nLine, cardX + 34, noteY);
+        noteY += 20;
+      });
+      cursorY += notesBoxHeight + 6;
+    } else {
+      cursorY += 10;
+    }
+
+    // Linha tracejada divisória tipo recibo
+    ctx.save();
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cardX + 22, cursorY);
+    ctx.lineTo(cardX + cardW - 22, cursorY);
+    ctx.stroke();
+    ctx.restore();
+
+    cursorY += 32;
+
+    // Bloco do Valor Pago em destaque
+    ctx.fillStyle = '#64748b';
+    ctx.font = '700 12px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(isCredit ? 'VALOR RECEBIDO' : 'VALOR PAGO', cardX + 22, cursorY);
+
+    cursorY += 34;
+    ctx.fillStyle = isCredit ? '#1d4ed8' : '#15803d';
+    ctx.font = '900 32px "Segoe UI", system-ui, sans-serif';
+    ctx.fillText(formatCurrency(bill.amount), cardX + 22, cursorY);
+
+    return canvas;
+  }
+
+  window.sharePaidReceiptWhatsApp = async function(id, source) {
+    const bill = getAllRecords().find(b => b.id === id && b._source === source);
+    if (!bill) return;
+
+    const canvas = buildReceiptCanvas(bill);
+    const dataUrl = canvas.toDataURL('image/png');
+    const safeSlug = normalizeText(bill.desc || 'comprovante').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const fileName = `comprovante-${safeSlug || 'pago'}-${bill.dueDate}.png`;
+
+    try {
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      const file = new File([blob], fileName, { type: 'image/png' });
+
+      // Compartilhamento nativo no celular (abre WhatsApp direto com a imagem)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: `Comprovante - ${bill.desc}`,
+          text: `Comprovante de pagamento: ${bill.desc} (${formatCurrency(bill.amount)}) - PAGO`
+        });
+        return;
+      }
+    } catch (err) {
+      if (err && err.name === 'AbortError') return; // Usuário cancelou o envio
+      console.warn('Compartilhamento nativo indisponível, abrindo preview/download:', err);
+    }
+
+    // Fallback para PC/navegador sem Web Share de arquivos: mostra preview e baixa
+    const previewBox = document.getElementById('receiptPreviewBox');
+    const downloadLink = document.getElementById('receiptDownloadLink');
+    previewBox.innerHTML = `<img src="${dataUrl}" alt="Comprovante Pago" />`;
+    downloadLink.href = dataUrl;
+    downloadLink.download = fileName;
+    document.getElementById('receiptModal').classList.add('active');
+  };
 
   // ================= LEMBRETES NO SINO =================
   function getUpcomingReminders() {
@@ -2157,6 +2451,7 @@
     const isAdm = page === 'adm';
     const titleEl = document.getElementById('pageTitle');
     const frozenSummary = document.getElementById('frozenSummary');
+    const filtersAccordion = document.getElementById('filtersAccordion');
     const subpageContent = document.getElementById('subpageContent');
 
     document.getElementById('recordsView').classList.toggle('hidden', isAdm);
@@ -2167,7 +2462,9 @@
       titleEl.textContent = 'ADM';
       titleEl.classList.remove('hidden');
       frozenSummary.classList.add('hidden');
+      filtersAccordion.classList.add('hidden');
       subpageContent.classList.add('adm-mode');
+      subpageContent.style.paddingTop = '';
       renderAdmConfig();
       return;
     }
@@ -2175,8 +2472,10 @@
     titleEl.textContent = '';
     titleEl.classList.add('hidden');
     frozenSummary.classList.remove('hidden');
+    filtersAccordion.classList.remove('hidden');
     subpageContent.classList.remove('adm-mode');
     render();
+    adjustFrozenPadding();
   };
 
   window.openDrawer = function() {
@@ -2566,6 +2865,7 @@
     if (currentPage !== 'financeiro') return;
 
     updateFiltersSummaryBadge();
+    adjustFrozenPadding();
 
     const selectedMonth = monthFilter.value;
     const statusFilter = document.getElementById('statusFilter').value;
@@ -2649,6 +2949,12 @@
       </svg>
     `;
 
+    const whatsappIconSvg = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.51.08-1.15.11-1.85-.11-.43-.14-.98-.32-1.69-.63-2.97-1.28-4.91-4.27-5.06-4.47-.15-.2-1.21-1.61-1.21-3.07 0-1.46.76-2.18 1.03-2.48.27-.3.59-.37.79-.37.2 0 .4 0 .57.01.18.01.43-.07.67.51.24.59.83 2.03.9 2.18.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.45.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.34.08.13.08.73-.16 1.41z"/>
+      </svg>
+    `;
+
     listEl.innerHTML = filteredBills.map(bill => {
       const isCredit = bill.nature === 'credit';
       const isOverdue = !bill.paid && bill.dueDate < todayStr;
@@ -2670,6 +2976,12 @@
       const payBtnTitle = bill.paid ? 'Reabrir lançamento' : (isCredit ? 'Marcar como recebido' : 'Marcar como pago');
       const cardToneClass = isCredit ? 'credit-item' : 'debit-item';
 
+      const whatsappBtnHtml = bill.paid
+        ? `<button class="btn-sm btn-whats" onclick="sharePaidReceiptWhatsApp('${bill.id}', '${bill._source}')" title="Enviar comprovante pelo WhatsApp">
+             ${whatsappIconSvg} WhatsApp
+           </button>`
+        : '';
+
       return `
         <div class="bill-item ${cardToneClass} ${bill.paid ? 'paid' : ''}">
           <button class="btn-del-corner" onclick="deleteBill('${bill.id}', '${bill._source}')" title="Excluir">✕</button>
@@ -2686,6 +2998,7 @@
               ${isCredit ? '+ ' : ''}${formatCurrency(bill.amount)}
             </div>
             <div class="bill-actions">
+              ${whatsappBtnHtml}
               <button class="${payBtnClass}" onclick="togglePaid('${bill.id}', '${bill._source}')" title="${payBtnTitle}" aria-label="${payBtnTitle}">
                 ${payBtnContent}
               </button>
