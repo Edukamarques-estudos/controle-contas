@@ -661,6 +661,20 @@
       color: #16191e;
     }
 
+    .quick-clear-btn {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(184, 93, 104, 0.25);
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .quick-clear-btn:hover {
+      filter: brightness(0.95);
+    }
+
     .filters-summary-badge {
       font-size: 0.74rem;
       font-weight: 600;
@@ -1371,6 +1385,7 @@
               <button type="button" class="quick-pill-btn" id="quickYesterday" onclick="toggleQuickDay('yesterday')">Ontem</button>
               <button type="button" class="quick-pill-btn" id="quickToday" onclick="toggleQuickDay('today')">Hoje</button>
               <button type="button" class="quick-pill-btn" id="quickTomorrow" onclick="toggleQuickDay('tomorrow')">Amanhã</button>
+              <button type="button" class="quick-clear-btn hidden" id="quickClearFiltersBtn" onclick="resetAllFilters()" title="Limpar todos os filtros">Limpar filtro</button>
             </div>
           </div>
           <span class="filters-accordion-arrow">▾</span>
@@ -2013,7 +2028,34 @@
     }
 
     badge.textContent = parts.join(' • ');
+
+    const isDefaultMonth = periodMode === 'month' && monthFilter.value === getCurrentMonthStr();
+    const hasAnyFilter =
+      !isDefaultMonth ||
+      statusVal !== 'all' ||
+      selectedDescs.size > 0 ||
+      selectedTypes.size > 0 ||
+      selectedCats.size > 0 ||
+      document.getElementById('searchFilter').value.trim() !== '';
+
+    const quickClearBtn = document.getElementById('quickClearFiltersBtn');
+    if (quickClearBtn) {
+      quickClearBtn.classList.toggle('hidden', !hasAnyFilter);
+    }
   }
+
+  window.resetAllFilters = function() {
+    selectedDescs.clear();
+    selectedTypes.clear();
+    selectedCats.clear();
+    document.getElementById('statusFilter').value = 'all';
+    document.getElementById('searchFilter').value = '';
+    const sInput = document.getElementById('searchMultiDesc');
+    if (sInput) sInput.value = '';
+    monthFilter.value = getCurrentMonthStr();
+    refreshMultiFilterOptions();
+    setPeriodMode('month');
+  };
 
   // ================= FILTROS MULTIPLOS E PERÍODOS =================
   window.toggleQuickDay = function(dayMode) {
