@@ -6,82 +6,118 @@
   <title>Eduardo • Controle Financeiro Unificado</title>
   <style>
     :root {
-      /* Tema Claro (Paleta Pastel Suave) */
-      --bg: #f8f7f4;
+      /* Tema Claro (Paleta do Anexo: Cartões por Status com Barra Lateral + Badge Sólido) */
+      --bg: #f1f5f9;
       --surface: #ffffff;
-      --surface-paid: #fcfbf9;
-      --header-home: #3d5a7c;
+      --surface-paid: #c5f3da;
+      --header-home: #1e293b;
       --header-home-text: #ffffff;
-      --card-contas: #7c9cbf;
-      --card-carro: #5c947c;
-      --card-adm: #7c77a6;
-      --debit-bg: #fdf5f6;
-      --debit-border: #f3dce0;
-      --credit-bg: #f2f8fd;
-      --credit-border: #d5e6f5;
-      --notes-bg: rgba(0, 0, 0, 0.035);
-      --notes-text: #5c6573;
-      --primary: #7c9cbf;
-      --primary-hover: #6788ad;
-      --primary-soft: #e6eef7;
-      --primary-text: #3d5a7c;
-      --success: #4a8b71;
-      --success-bg: #e1f3eb;
-      --whatsapp: #1f8f4e;
-      --whatsapp-bg: #dcf8e6;
-      --warning: #a67c37;
-      --warning-bg: #fcf1d8;
-      --warning-border: #f2dfb3;
-      --danger: #b85d68;
-      --danger-bg: #fae6e8;
-      --edit: #6d689e;
-      --edit-bg: #ecebfa;
-      --gain: #3b73a8;
-      --gain-bg: #dcebfa;
-      --text: #3b424c;
-      --muted: #7e8794;
-      --border: #eae6df;
-      --shadow: 0 4px 12px rgba(59, 66, 76, 0.05);
-      --radius: 16px;
+      --card-contas: #2563eb;
+      --card-carro: #16a34a;
+      --card-adm: #4f46e5;
+
+      /* Cores dos 4 Estados dos Cartões (Anexo) */
+      /* 1. Lançamento Pago (Verde Menta) */
+      --card-paid-bg: #c6f3dc;
+      --card-paid-accent: #1ea866;
+      --card-paid-text: #15803d;
+
+      /* 2. Lançamento em Aberto (Amarelo Creme) */
+      --card-open-bg: #fde9a2;
+      --card-open-accent: #d9a31e;
+      --card-open-text: #a16207;
+
+      /* 3. Lançamento Vencido (Salmão / Vermelho Suave) */
+      --card-overdue-bg: #f7c3c0;
+      --card-overdue-accent: #d62828;
+      --card-overdue-text: #b91c1c;
+
+      /* 4. Crédito / Recebido / A Receber (Azul Celeste) */
+      --card-credit-bg: #c8e7fc;
+      --card-credit-accent: #2188dd;
+      --card-credit-text: #1d4ed8;
+
+      --notes-bg: rgba(15, 23, 42, 0.055);
+      --notes-text: #334155;
+      --primary: #2188dd;
+      --primary-hover: #1971bd;
+      --primary-soft: #e0f2fe;
+      --primary-text: #0369a1;
+      --success: #1ea866;
+      --success-bg: #dcfce7;
+      --whatsapp: #16a34a;
+      --whatsapp-bg: #dcfce7;
+      --warning: #d9a31e;
+      --warning-bg: #fef3c7;
+      --warning-border: #fde68a;
+      --danger: #d62828;
+      --danger-bg: #fee2e2;
+      --edit: #4f46e5;
+      --edit-bg: #e0e7ff;
+      --gain: #2188dd;
+      --gain-bg: #dbeafe;
+      --text: #111827;
+      --muted: #4b5563;
+      --border: #cbd5e1;
+      --shadow: 0 3px 10px rgba(15, 23, 42, 0.07);
+      --radius: 14px;
     }
 
-    /* Tema Escuro (Dark Mode Pastel) */
+    /* Novo Tema Escuro (Modern Obsidian & Neon Jewel Accents) */
     body.dark {
-      --bg: #16191e;
-      --surface: #1f242c;
-      --surface-paid: #1a1e25;
-      --header-home: #1f2937;
-      --header-home-text: #e2e8f0;
-      --card-contas: #4d6e94;
-      --card-carro: #3e6b58;
-      --card-adm: #54507a;
-      --debit-bg: #271f23;
-      --debit-border: #3d2c33;
-      --credit-bg: #1d2632;
-      --credit-border: #2c3c52;
-      --notes-bg: rgba(255, 255, 255, 0.05);
+      --bg: #0b0f17;
+      --surface: #131a26;
+      --surface-paid: #0f2922;
+      --header-home: #090d14;
+      --header-home-text: #f8fafc;
+      --card-contas: #2563eb;
+      --card-carro: #059669;
+      --card-adm: #6366f1;
+
+      /* Cores dos 4 Estados dos Cartões no Novo Modo Escuro */
+      /* 1. Lançamento Pago (Esmeralda Profundo) */
+      --card-paid-bg: #0f2922;
+      --card-paid-accent: #10b981;
+      --card-paid-text: #34d399;
+
+      /* 2. Lançamento em Aberto (Âmbar Escuro Elegante) */
+      --card-open-bg: #292111;
+      --card-open-accent: #f59e0b;
+      --card-open-text: #fbbf24;
+
+      /* 3. Lançamento Vencido (Rubi Escuro) */
+      --card-overdue-bg: #2c1318;
+      --card-overdue-accent: #f43f5e;
+      --card-overdue-text: #fb7185;
+
+      /* 4. Crédito / Recebido (Safira Escuro) */
+      --card-credit-bg: #102338;
+      --card-credit-accent: #38bdf8;
+      --card-credit-text: #38bdf8;
+
+      --notes-bg: rgba(255, 255, 255, 0.06);
       --notes-text: #cbd5e1;
-      --primary: #8ab0db;
-      --primary-hover: #9fc0e6;
-      --primary-soft: #253447;
-      --primary-text: #a5c7ed;
-      --success: #6ec49e;
-      --success-bg: #1d362d;
-      --whatsapp: #4ade80;
-      --whatsapp-bg: #163324;
-      --warning: #e5b567;
-      --warning-bg: #382e1e;
-      --warning-border: #4d3f28;
-      --danger: #e0828d;
-      --danger-bg: #3b2327;
-      --edit: #a8a2e6;
-      --edit-bg: #29273d;
-      --gain: #7cb8f0;
-      --gain-bg: #1c324a;
-      --text: #e2e8f0;
+      --primary: #38bdf8;
+      --primary-hover: #7dd3fc;
+      --primary-soft: #162a45;
+      --primary-text: #7dd3fc;
+      --success: #10b981;
+      --success-bg: #0f2e24;
+      --whatsapp: #34d399;
+      --whatsapp-bg: #0f2e24;
+      --warning: #f59e0b;
+      --warning-bg: #2e220f;
+      --warning-border: #453214;
+      --danger: #f43f5e;
+      --danger-bg: #33131b;
+      --edit: #818cf8;
+      --edit-bg: #1e2140;
+      --gain: #38bdf8;
+      --gain-bg: #122842;
+      --text: #f1f5f9;
       --muted: #94a3b8;
-      --border: #2e3540;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      --border: #1e293b;
+      --shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
@@ -900,42 +936,58 @@
     .bill-item {
       position: relative;
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      border-left: 7px solid var(--primary);
       border-radius: var(--radius);
-      padding: 15px 42px 15px 15px;
+      padding: 15px 42px 15px 16px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
       box-shadow: var(--shadow);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
 
-    .bill-item.debit-item {
-      background: var(--debit-bg);
-      border-color: var(--debit-border);
+    body.dark .bill-item {
+      border-top-color: rgba(255, 255, 255, 0.06);
+      border-right-color: rgba(255, 255, 255, 0.06);
+      border-bottom-color: rgba(255, 255, 255, 0.06);
     }
 
-    .bill-item.credit-item {
-      background: var(--credit-bg);
-      border-color: var(--credit-border);
+    /* 4 Estados Visuais Idênticos ao Anexo */
+    .bill-item.state-paid {
+      background: var(--card-paid-bg);
+      border-left-color: var(--card-paid-accent);
     }
 
-    .bill-item.paid {
-      opacity: 0.9;
+    .bill-item.state-open {
+      background: var(--card-open-bg);
+      border-left-color: var(--card-open-accent);
+    }
+
+    .bill-item.state-overdue {
+      background: var(--card-overdue-bg);
+      border-left-color: var(--card-overdue-accent);
+    }
+
+    .bill-item.state-credit {
+      background: var(--card-credit-bg);
+      border-left-color: var(--card-credit-accent);
     }
 
     .bill-info {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
       min-width: 220px;
       flex: 1;
     }
 
     .bill-title {
-      font-weight: 600;
-      font-size: 1.02rem;
+      font-weight: 700;
+      font-size: 1.04rem;
+      color: var(--text);
       display: flex;
       align-items: center;
       flex-wrap: wrap;
@@ -949,31 +1001,66 @@
       gap: 6px;
     }
 
+    /* Badges Sólidos estilo Pílula (PAGO / EM ABERTO / VENCIDO / RECEBIDO) */
     .badge {
-      font-size: 0.7rem;
-      padding: 2px 8px;
+      font-size: 0.69rem;
+      padding: 3px 10px;
       border-radius: 999px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.4px;
+      display: inline-flex;
+      align-items: center;
     }
 
-    .badge-pending { background: var(--warning-bg); color: var(--warning); }
-    .badge-overdue { background: var(--danger-bg); color: var(--danger); }
-    .badge-paid { background: var(--success-bg); color: var(--success); }
-    .badge-type-debit { background: var(--danger-bg); color: var(--danger); }
-    .badge-type-credit { background: var(--gain-bg); color: var(--gain); }
+    .badge-paid {
+      background: var(--card-paid-accent);
+      color: #ffffff;
+    }
+    .badge-pending {
+      background: var(--card-open-accent);
+      color: #ffffff;
+    }
+    .badge-overdue {
+      background: var(--card-overdue-accent);
+      color: #ffffff;
+    }
+    .badge-credit-status {
+      background: var(--card-credit-accent);
+      color: #ffffff;
+    }
+    body.dark .badge-paid,
+    body.dark .badge-pending,
+    body.dark .badge-overdue,
+    body.dark .badge-credit-status {
+      color: #0b0f17;
+    }
+
+    .badge-type-debit {
+      background: rgba(15, 23, 42, 0.08);
+      color: var(--text);
+      font-weight: 700;
+    }
+    .badge-type-credit {
+      background: rgba(15, 23, 42, 0.08);
+      color: var(--text);
+      font-weight: 700;
+    }
+    body.dark .badge-type-debit,
+    body.dark .badge-type-credit {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
 
     .bill-meta {
       font-size: 0.84rem;
-      color: var(--muted);
+      color: var(--text);
+      opacity: 0.85;
     }
 
     .weekday-tag {
       text-transform: lowercase;
       font-weight: 600;
-      color: var(--text);
-      opacity: 0.8;
     }
 
     .bill-notes {
@@ -983,8 +1070,12 @@
       padding: 6px 10px;
       border-radius: 8px;
       margin-top: 2px;
-      border-left: 3px solid var(--primary);
+      border-left: 3px solid rgba(15, 23, 42, 0.25);
       word-break: break-word;
+    }
+
+    body.dark .bill-notes {
+      border-left-color: rgba(255, 255, 255, 0.25);
     }
 
     .bill-right {
@@ -995,13 +1086,76 @@
     }
 
     .bill-amount {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--danger);
+      font-size: 1.14rem;
+      font-weight: 800;
+      color: var(--card-open-text);
     }
 
-    .bill-amount.credit {
-      color: var(--gain);
+    .bill-amount.amt-paid {
+      color: var(--card-paid-text);
+    }
+
+    .bill-amount.amt-open {
+      color: var(--card-open-text);
+    }
+
+    .bill-amount.amt-overdue {
+      color: var(--card-overdue-text);
+    }
+
+    .bill-amount.amt-credit {
+      color: var(--card-credit-text);
+    }
+
+    /* Botões de ação nos cards com fundo sólido limpo para contrastar bem sobre os cards coloridos */
+    .bill-item .btn-pay {
+      background: #ffffff;
+      color: #15803d;
+      border: 1px solid rgba(21, 128, 61, 0.25);
+    }
+    .bill-item .btn-edit {
+      background: #ffffff;
+      color: #4338ca;
+      border: 1px solid rgba(67, 56, 202, 0.22);
+    }
+    .bill-item .btn-copy {
+      background: #ffffff;
+      color: #0369a1;
+      border: 1px solid rgba(3, 105, 161, 0.22);
+    }
+    .bill-item .btn-whats {
+      background: #ffffff;
+      color: #15803d;
+      border: 1px solid rgba(21, 128, 61, 0.25);
+    }
+    .bill-item .btn-del-corner {
+      background: rgba(255, 255, 255, 0.85);
+      color: #b91c1c;
+    }
+
+    body.dark .bill-item .btn-pay {
+      background: rgba(16, 185, 129, 0.16);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+    }
+    body.dark .bill-item .btn-edit {
+      background: rgba(129, 140, 248, 0.16);
+      color: #a5b4fc;
+      border: 1px solid rgba(165, 180, 252, 0.25);
+    }
+    body.dark .bill-item .btn-copy {
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border: 1px solid rgba(125, 211, 252, 0.25);
+    }
+    body.dark .bill-item .btn-whats {
+      background: rgba(52, 211, 153, 0.16);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+    }
+    body.dark .bill-item .btn-del-corner {
+      background: rgba(244, 63, 94, 0.18);
+      color: #fb7185;
     }
 
     .bill-actions {
@@ -3067,9 +3221,23 @@
       const isCredit = bill.nature === 'credit';
       const isOverdue = !bill.paid && bill.dueDate < todayStr;
 
-      let statusBadge = `<span class="badge badge-pending">${isCredit ? 'A Receber' : 'Pendente'}</span>`;
-      if (bill.paid) statusBadge = `<span class="badge badge-paid">${isCredit ? 'Recebido' : 'Pago'}</span>`;
-      else if (isOverdue && !isCredit) statusBadge = `<span class="badge badge-overdue">Vencida</span>`;
+      let stateClass = 'state-open';
+      let amountClass = 'amt-open';
+      let statusBadge = `<span class="badge badge-pending">EM ABERTO</span>`;
+
+      if (isCredit) {
+        stateClass = 'state-credit';
+        amountClass = 'amt-credit';
+        statusBadge = `<span class="badge badge-credit-status">${bill.paid ? 'RECEBIDO' : 'A RECEBER'}</span>`;
+      } else if (bill.paid) {
+        stateClass = 'state-paid';
+        amountClass = 'amt-paid';
+        statusBadge = `<span class="badge badge-paid">PAGO</span>`;
+      } else if (isOverdue) {
+        stateClass = 'state-overdue';
+        amountClass = 'amt-overdue';
+        statusBadge = `<span class="badge badge-overdue">VENCIDO</span>`;
+      }
 
       const typeBadgeClass = isCredit ? 'badge-type-credit' : 'badge-type-debit';
       const notesHtml = bill.notes
@@ -3082,7 +3250,6 @@
 
       const payBtnClass = bill.paid ? 'btn-sm btn-icon-only btn-pay' : 'btn-sm btn-pay';
       const payBtnTitle = bill.paid ? 'Reabrir lançamento' : (isCredit ? 'Marcar como recebido' : 'Marcar como pago');
-      const cardToneClass = isCredit ? 'credit-item' : 'debit-item';
 
       const whatsappBtnHtml = bill.paid
         ? `<button class="btn-sm btn-icon-only btn-whats" onclick="sharePaidReceiptWhatsApp('${bill.id}', '${bill._source}')" title="Enviar comprovante pelo WhatsApp" aria-label="Enviar comprovante pelo WhatsApp">
@@ -3091,18 +3258,18 @@
         : '';
 
       return `
-        <div class="bill-item ${cardToneClass} ${bill.paid ? 'paid' : ''}">
+        <div class="bill-item ${stateClass} ${bill.paid ? 'paid' : ''}">
           <button class="btn-del-corner" onclick="deleteBill('${bill.id}', '${bill._source}')" title="Excluir">✕</button>
           <div class="bill-info">
             <div class="bill-title">${escapeHTML(bill.desc)} ${statusBadge}</div>
             <div class="status-row">
               <span class="badge ${typeBadgeClass}">${escapeHTML(bill.launchType)}</span>
             </div>
-            <div class="bill-meta">Data: <strong>${formatDateWithWeekday(bill.dueDate)}</strong> • ${escapeHTML(bill.category)}</div>
+            <div class="bill-meta">${isCredit ? 'Data' : 'Vencimento'}: <strong>${formatDateWithWeekday(bill.dueDate)}</strong> • ${escapeHTML(bill.category)}</div>
             ${notesHtml}
           </div>
           <div class="bill-right">
-            <div class="bill-amount ${isCredit ? 'credit' : ''}">
+            <div class="bill-amount ${amountClass}">
               ${isCredit ? '+ ' : ''}${formatCurrency(bill.amount)}
             </div>
             <div class="bill-actions">
