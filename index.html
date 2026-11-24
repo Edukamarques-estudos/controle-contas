@@ -1385,7 +1385,7 @@
               <button type="button" class="quick-pill-btn" id="quickYesterday" onclick="toggleQuickDay('yesterday')">Ontem</button>
               <button type="button" class="quick-pill-btn" id="quickToday" onclick="toggleQuickDay('today')">Hoje</button>
               <button type="button" class="quick-pill-btn" id="quickTomorrow" onclick="toggleQuickDay('tomorrow')">Amanhã</button>
-              <button type="button" class="quick-clear-btn hidden" id="quickClearFiltersBtn" onclick="resetAllFilters()" title="Limpar todos os filtros">Limpar filtro</button>
+              <button type="button" class="quick-clear-btn" id="quickClearFiltersBtn" onclick="resetAllFilters()" title="Limpar todos os filtros">Limpar filtro</button>
             </div>
           </div>
           <span class="filters-accordion-arrow">▾</span>
@@ -2040,7 +2040,7 @@
 
     const quickClearBtn = document.getElementById('quickClearFiltersBtn');
     if (quickClearBtn) {
-      quickClearBtn.classList.toggle('hidden', !hasAnyFilter);
+      quickClearBtn.style.opacity = hasAnyFilter ? '1' : '0.65';
     }
   }
 
