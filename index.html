@@ -16,7 +16,7 @@
       --card-carro: #16a34a;
       --card-adm: #4f46e5;
 
-      /* Cores dos 4 Estados dos Cartões (Anexo) */
+      /* Cores dos 4 Estados dos Cartões */
       /* 1. Lançamento Pago (Verde Menta) */
       --card-paid-bg: #c6f3dc;
       --card-paid-accent: #1ea866;
@@ -56,6 +56,10 @@
       --edit-bg: #e0e7ff;
       --gain: #2188dd;
       --gain-bg: #dbeafe;
+      --credit-bg: #e0f2fe;
+      --credit-border: #bae6fd;
+      --debit-bg: #fee2e2;
+      --debit-border: #fecaca;
       --text: #111827;
       --muted: #4b5563;
       --border: #cbd5e1;
@@ -114,6 +118,10 @@
       --edit-bg: #1e2140;
       --gain: #38bdf8;
       --gain-bg: #122842;
+      --credit-bg: #102338;
+      --credit-border: #1e3a5f;
+      --debit-bg: #2c1318;
+      --debit-border: #4c1d24;
       --text: #f1f5f9;
       --muted: #94a3b8;
       --border: #1e293b;
@@ -955,7 +963,7 @@
       border-bottom-color: rgba(255, 255, 255, 0.06);
     }
 
-    /* 4 Estados Visuais Idênticos ao Anexo */
+    /* 4 Estados Visuais */
     .bill-item.state-paid {
       background: var(--card-paid-bg);
       border-left-color: var(--card-paid-accent);
@@ -1107,7 +1115,7 @@
       color: var(--card-credit-text);
     }
 
-    /* Botões de ação nos cards com fundo sólido limpo para contrastar bem sobre os cards coloridos */
+    /* Botões de ação nos cards com fundo sólido limpo */
     .bill-item .btn-pay {
       background: #ffffff;
       color: #15803d;
@@ -1300,6 +1308,75 @@
 
     .form-group label { font-size: 0.84rem; font-weight: 600; }
     .form-group input, .form-group select, .form-group textarea { width: 100%; }
+
+    /* ================= BLOCO DE PARCELAMENTO NO FORMULÁRIO ================= */
+    .installment-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 11px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .installment-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .installment-toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .installment-toggle-label input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .installment-badge-hint {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary-text);
+    }
+
+    .installment-details {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .installment-preview {
+      background: var(--primary-soft);
+      color: var(--primary-text);
+      border-radius: 9px;
+      padding: 8px 11px;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .installment-preview strong {
+      font-weight: 800;
+    }
 
     .modal-footer {
       display: flex;
@@ -1796,7 +1873,7 @@
 
       <div class="form-group">
         <label for="desc">Descrição *</label>
-        <input type="text" id="desc" list="descSuggestions" placeholder="Ex: Energia Elétrica, Ganhos Uber, Gasolina..." required />
+        <input type="text" id="desc" list="descSuggestions" placeholder="Ex: Energia Elétrica, Ganhos Uber, Gasolina..." oninput="updateInstallmentPreview()" required />
         <datalist id="descSuggestions"></datalist>
       </div>
 
@@ -1813,12 +1890,40 @@
 
       <div class="form-row-2">
         <div class="form-group">
-          <label for="amount">Valor (R$) *</label>
-          <input type="number" id="amount" step="0.01" min="0" placeholder="0,00" required />
+          <label for="amount" id="amountLabel">Valor (R$) *</label>
+          <input type="number" id="amount" step="0.01" min="0" placeholder="0,00" oninput="updateInstallmentPreview()" required />
         </div>
         <div class="form-group">
-          <label for="dueDate">Data / Vencimento *</label>
-          <input type="date" id="dueDate" required />
+          <label for="dueDate" id="dueDateLabel">Data / Vencimento *</label>
+          <input type="date" id="dueDate" onchange="updateInstallmentPreview()" required />
+        </div>
+      </div>
+
+      <!-- Opção de Parcelamento (visível em Novo Lançamento e Copiar) -->
+      <div class="installment-box" id="installmentBox">
+        <div class="installment-toggle-row" onclick="document.getElementById('isInstallment').click()">
+          <span class="installment-toggle-label" onclick="event.stopPropagation()">
+            <input type="checkbox" id="isInstallment" onchange="toggleInstallmentOptions()" />
+            <span>Lançar parcelado</span>
+          </span>
+          <span class="installment-badge-hint">Mensal automático</span>
+        </div>
+
+        <div class="installment-details hidden" id="installmentDetails">
+          <div class="form-row-2">
+            <div class="form-group" style="margin-bottom:0;">
+              <label for="installmentCount">Nº de Parcelas</label>
+              <input type="number" id="installmentCount" min="2" max="120" value="2" oninput="updateInstallmentPreview()" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label for="installmentValueMode">O valor acima é:</label>
+              <select id="installmentValueMode" onchange="updateInstallmentPreview()">
+                <option value="total">Valor Total (dividir)</option>
+                <option value="each">Valor de cada parcela</option>
+              </select>
+            </div>
+          </div>
+          <div class="installment-preview" id="installmentPreview"></div>
         </div>
       </div>
 
@@ -2098,8 +2203,8 @@
     catsContainer.innerHTML = sortedCategories.map((c) => `
       <span class="config-tag">
         ${escapeHTML(c)}
-        <button type="button" onclick="editCategoryItem('${escapeHTML(c).replace(/'/g, "\'")}')" title="Editar categoria" aria-label="Editar categoria">✏️</button>
-        <button type="button" onclick="removeCategoryItem('${escapeHTML(c).replace(/'/g, "\'")}')" title="Remover categoria" aria-label="Remover categoria">✕</button>
+        <button type="button" onclick="editCategoryItem('${escapeHTML(c).replace(/'/g, "\\'")}')" title="Editar categoria" aria-label="Editar categoria">✏️</button>
+        <button type="button" onclick="removeCategoryItem('${escapeHTML(c).replace(/'/g, "\\'")}')" title="Remover categoria" aria-label="Remover categoria">✕</button>
       </span>
     `).join('');
   }
@@ -2905,6 +3010,116 @@
     `;
   };
 
+  // ================= LÓGICA DE PARCELAMENTO NO FORMULÁRIO =================
+  function calculateInstallmentSchedule(desc, rawAmount, firstDateStr, count, valueMode) {
+    const safeCount = Math.max(2, Math.min(120, parseInt(count, 10) || 2));
+    const safeAmount = isNaN(rawAmount) || rawAmount < 0 ? 0 : rawAmount;
+    const totalCents = Math.round(safeAmount * 100);
+
+    const schedule = [];
+    let currentDate = firstDateStr;
+
+    if (valueMode === 'each') {
+      const eachAmount = Number((totalCents / 100).toFixed(2));
+      for (let i = 1; i <= safeCount; i++) {
+        schedule.push({
+          index: i,
+          total: safeCount,
+          desc: `${desc} (${i}/${safeCount})`,
+          amount: eachAmount,
+          dueDate: currentDate
+        });
+        currentDate = addOneMonth(currentDate);
+      }
+    } else {
+      // Divide o valor total em centavos exatos (diferença de arredondamento vai na 1ª parcela)
+      const baseCents = Math.floor(totalCents / safeCount);
+      const remainderCents = totalCents - (baseCents * safeCount);
+
+      for (let i = 1; i <= safeCount; i++) {
+        const cents = i === 1 ? baseCents + remainderCents : baseCents;
+        schedule.push({
+          index: i,
+          total: safeCount,
+          desc: `${desc} (${i}/${safeCount})`,
+          amount: Number((cents / 100).toFixed(2)),
+          dueDate: currentDate
+        });
+        currentDate = addOneMonth(currentDate);
+      }
+    }
+
+    return schedule;
+  }
+
+  window.toggleInstallmentOptions = function() {
+    const isChecked = document.getElementById('isInstallment').checked;
+    const detailsEl = document.getElementById('installmentDetails');
+    const amountLabel = document.getElementById('amountLabel');
+    const dueDateLabel = document.getElementById('dueDateLabel');
+    const submitBtn = document.getElementById('submitBtn');
+
+    detailsEl.classList.toggle('hidden', !isChecked);
+
+    if (isChecked) {
+      dueDateLabel.textContent = 'Data da 1ª Parcela *';
+      updateInstallmentPreview();
+    } else {
+      amountLabel.textContent = 'Valor (R$) *';
+      dueDateLabel.textContent = 'Data / Vencimento *';
+      submitBtn.textContent = 'Confirmar e Salvar';
+    }
+  };
+
+  window.updateInstallmentPreview = function() {
+    const isChecked = document.getElementById('isInstallment').checked;
+    if (!isChecked) return;
+
+    const desc = document.getElementById('desc').value.trim() || 'Lançamento';
+    const rawAmount = parseFloat(document.getElementById('amount').value) || 0;
+    const dueDate = document.getElementById('dueDate').value || getTodayLocalStr();
+    const count = Math.max(2, Math.min(120, parseInt(document.getElementById('installmentCount').value, 10) || 2));
+    const valueMode = document.getElementById('installmentValueMode').value;
+
+    const amountLabel = document.getElementById('amountLabel');
+    const submitBtn = document.getElementById('submitBtn');
+    const previewEl = document.getElementById('installmentPreview');
+
+    amountLabel.textContent = valueMode === 'total' ? 'Valor Total (R$) *' : 'Valor da Parcela (R$) *';
+    submitBtn.textContent = `Gerar ${count} Parcelas`;
+
+    const schedule = calculateInstallmentSchedule(desc, rawAmount, dueDate, count, valueMode);
+    const totalSum = schedule.reduce((acc, item) => acc + item.amount, 0);
+    const first = schedule[0];
+    const last = schedule[schedule.length - 1];
+
+    const firstValFormatted = formatCurrency(first.amount);
+    const secondValFormatted = schedule[1] ? formatCurrency(schedule[1].amount) : firstValFormatted;
+    const installmentText = first.amount !== (schedule[1]?.amount ?? first.amount)
+      ? `1ª de <strong>${firstValFormatted}</strong> e demais de <strong>${secondValFormatted}</strong>`
+      : `<strong>${count}x de ${firstValFormatted}</strong>`;
+
+    previewEl.innerHTML = `
+      Serão criados <strong>${count} lançamentos</strong> (${installmentText} • Total: <strong>${formatCurrency(totalSum)}</strong>):<br>
+      • 1ª: <strong>${escapeHTML(first.desc)}</strong> em ${formatDatePlain(first.dueDate)}<br>
+      • Última: <strong>${escapeHTML(last.desc)}</strong> em ${formatDatePlain(last.dueDate)}
+    `;
+  };
+
+  function resetInstallmentUI(showBox) {
+    const box = document.getElementById('installmentBox');
+    const checkbox = document.getElementById('isInstallment');
+    const details = document.getElementById('installmentDetails');
+
+    box.classList.toggle('hidden', !showBox);
+    checkbox.checked = false;
+    details.classList.add('hidden');
+    document.getElementById('installmentCount').value = 2;
+    document.getElementById('installmentValueMode').value = 'total';
+    document.getElementById('amountLabel').textContent = 'Valor (R$) *';
+    document.getElementById('dueDateLabel').textContent = 'Data / Vencimento *';
+  }
+
   // ================= FORMULÁRIO NOVO / EDITAR / COPIAR =================
   function populateFormSelects(selectedType = '', selectedCategory = '') {
     const typeSelect = document.getElementById('launchType');
@@ -2941,6 +3156,7 @@
     document.getElementById('submitBtn').textContent = 'Confirmar e Salvar';
     document.getElementById('billForm').reset();
 
+    resetInstallmentUI(true);
     populateFormSelects();
 
     const selectedMonth = monthFilter.value || getCurrentMonthStr();
@@ -2961,6 +3177,7 @@
     document.getElementById('modalSubtitle').textContent = 'Altere o valor, tipo, data, observação ou outros dados:';
     document.getElementById('submitBtn').textContent = 'Salvar Alterações';
 
+    resetInstallmentUI(false);
     populateFormSelects(bill.launchType, bill.category);
 
     document.getElementById('desc').value = bill.desc;
@@ -2982,6 +3199,7 @@
     document.getElementById('modalSubtitle').textContent = 'Confira ou ajuste os dados copiados antes de salvar.';
     document.getElementById('submitBtn').textContent = 'Confirmar e Salvar';
 
+    resetInstallmentUI(true);
     populateFormSelects(bill.launchType, bill.category);
 
     document.getElementById('desc').value = bill.desc;
@@ -3024,20 +3242,49 @@
       delete updatedBill._source;
       await set(ref(db, `${targetPath}/${editingId}`), updatedBill);
     } else {
-      const id = Date.now().toString();
-      const newBill = {
-        id,
-        desc,
-        launchType,
-        nature,
-        category,
-        amount,
-        dueDate,
-        notes,
-        paid: false,
-        paidAt: null
-      };
-      await set(ref(db, `lancamentos/${id}`), newBill);
+      const isInstallment = document.getElementById('isInstallment').checked;
+
+      if (isInstallment) {
+        const count = Math.max(2, Math.min(120, parseInt(document.getElementById('installmentCount').value, 10) || 2));
+        const valueMode = document.getElementById('installmentValueMode').value;
+        const schedule = calculateInstallmentSchedule(desc, amount, dueDate, count, valueMode);
+
+        const baseTimestamp = Date.now();
+        const batchUpdates = {};
+
+        schedule.forEach((item, idx) => {
+          const id = `${baseTimestamp}_${String(idx + 1).padStart(3, '0')}`;
+          batchUpdates[id] = {
+            id,
+            desc: item.desc,
+            launchType,
+            nature,
+            category,
+            amount: item.amount,
+            dueDate: item.dueDate,
+            notes,
+            paid: false,
+            paidAt: null
+          };
+        });
+
+        await update(refs.lancamentos, batchUpdates);
+      } else {
+        const id = Date.now().toString();
+        const newBill = {
+          id,
+          desc,
+          launchType,
+          nature,
+          category,
+          amount,
+          dueDate,
+          notes,
+          paid: false,
+          paidAt: null
+        };
+        await set(ref(db, `lancamentos/${id}`), newBill);
+      }
     }
 
     closeModal('formModal');
@@ -3080,6 +3327,7 @@
     document.getElementById('modalSubtitle').textContent = 'Dados preenchidos automaticamente. Confira o valor e a data:';
     document.getElementById('submitBtn').textContent = 'Confirmar e Salvar';
 
+    resetInstallmentUI(true);
     populateFormSelects(lastPaidBill.launchType, lastPaidBill.category);
 
     document.getElementById('desc').value = lastPaidBill.desc;
