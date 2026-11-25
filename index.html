@@ -2301,7 +2301,8 @@
     if (!badge) return;
 
     const parts = [];
-    if (periodMode === 'yesterday') parts.push('Ontem');
+    if (periodMode === 'all') parts.push('Todos os períodos');
+    else if (periodMode === 'yesterday') parts.push('Ontem');
     else if (periodMode === 'today') parts.push('Hoje');
     else if (periodMode === 'tomorrow') parts.push('Amanhã');
     else if (periodMode === 'week') parts.push('Semana');
@@ -2327,9 +2328,8 @@
 
     badge.textContent = parts.join(' • ');
 
-    const isDefaultMonth = periodMode === 'month' && monthFilter.value === getCurrentMonthStr();
     const hasAnyFilter =
-      !isDefaultMonth ||
+      periodMode !== 'all' ||
       statusVal !== 'all' ||
       selectedDescs.size > 0 ||
       selectedTypes.size > 0 ||
@@ -2348,16 +2348,19 @@
     selectedCats.clear();
     document.getElementById('statusFilter').value = 'all';
     document.getElementById('searchFilter').value = '';
+    document.getElementById('customStart').value = '';
+    document.getElementById('customEnd').value = '';
+    monthFilter.value = '';
     const sInput = document.getElementById('searchMultiDesc');
     if (sInput) sInput.value = '';
-    monthFilter.value = getCurrentMonthStr();
     refreshMultiFilterOptions();
-    setPeriodMode('month');
+    setPeriodMode('all');
   };
 
   // ================= FILTROS MULTIPLOS E PERÍODOS =================
   window.toggleQuickDay = function(dayMode) {
     if (periodMode === dayMode) {
+      if (!monthFilter.value) monthFilter.value = getCurrentMonthStr();
       setPeriodMode('month');
     } else {
       setPeriodMode(dayMode);
@@ -2377,6 +2380,10 @@
 
     document.getElementById('monthFilter').classList.toggle('hidden', mode !== 'month');
     document.getElementById('customRangeInputs').classList.toggle('hidden', mode !== 'custom');
+
+    if (mode === 'month' && !monthFilter.value) {
+      monthFilter.value = getCurrentMonthStr();
+    }
 
     if (mode === 'custom') {
       const startEl = document.getElementById('customStart');
@@ -3419,6 +3426,7 @@
     const periodBills = getAllRecords()
       .filter(b => {
         if (!b.dueDate) return false;
+        if (periodMode === 'all') return true;
         if (periodMode === 'yesterday') return b.dueDate === yesterdayStr;
         if (periodMode === 'today') return b.dueDate === todayStr;
         if (periodMode === 'tomorrow') return b.dueDate === tomorrowStr;
@@ -3426,7 +3434,7 @@
         if (periodMode === 'custom') {
           return (!customStart || b.dueDate >= customStart) && (!customEnd || b.dueDate <= customEnd);
         }
-        return b.dueDate.startsWith(selectedMonth);
+        return !selectedMonth || b.dueDate.startsWith(selectedMonth);
       })
       .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 
